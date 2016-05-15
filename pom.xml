@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.agifac.maf.packaging</groupId>
+	<artifactId>bizdock-image-builder</artifactId>
+	<version>12.0.1-SNAPSHOT</version>
+	<name>Docker image builder</name>
+	<description>This module is an assembly which collects the packages used subsequently to build the BizDock Docker image</description>
+	<packaging>pom</packaging>
+	<url>https://github.com/theAgileFactory</url>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License, version 2</name>
+			<url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/theAgileFactory/bizdock-installation.git</connection>
+		<developerConnection>scm:git:https://github.com/theAgileFactory/bizdock-installation.git</developerConnection>
+		<url>scm:git:https://github.com/theAgileFactory/bizdock-installation.git</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<developers>
+		<developer>
+			<id>pycloux</id>
+			<name>Pierre-Yves Cloux</name>
+			<email>dev@pycloux.com</email>
+		</developer>
+	</developers>
+	
+	<repositories>
+		<repository>
+			<id>typesafe</id>
+			<name>typesafe-releases</name>
+			<url>http://repo.typesafe.com/typesafe/releases/</url>
+		</repository>
+		<repository>
+            <id>sonatype-snapshots</id>
+            <name>sonatype-snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository> 
+	</repositories>
+
+	<properties>
+		<project.build.sourceEncoding>latin1</project.build.sourceEncoding>
+		<maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.agifac.maf.packaging</groupId>
+			<artifactId>maf-desktop</artifactId>
+			<version>12.0.1-SNAPSHOT</version>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>com.agifac.maf</groupId>
+			<artifactId>maf-dbmdl</artifactId>
+			<version>12.1.2-SNAPSHOT</version>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>com.agifac.lib</groupId>
+			<artifactId>dbmdl-framework</artifactId>
+			<version>12.1.1-SNAPSHOT</version>
+			<type>zip</type>
+		</dependency>
+		<dependency>
+		    <groupId>com.agifac.lib</groupId>
+		    <artifactId>maf-defaultplugins-extension</artifactId>
+		    <version>12.1.1</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>${maven-dependency-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-antrun-plugin</artifactId>
+			    <version>1.7</version>
+			    <executions>
+			          <execution>
+			            <goals>
+			              <goal>run</goal>
+			            </goals>
+			            <phase>generate-sources</phase>
+			            <configuration>
+			              <target>
+			                <property name="buildtime" value="${maven.build.timestamp}" />
+			                <echo message="Writing project version string to ${resources.dir}/${version.filename} ..." />
+			                <echo file="${project.build.directory}/version.properties" message="${project.version}${line.separator}" />
+			              </target>
+			            </configuration>
+			          </execution>
+			        </executions>
+			  </plugin>
+		</plugins>
+	</build>
+</project>
