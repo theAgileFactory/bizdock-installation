@@ -1,2 +1,4 @@
-# bizdock-installation
-The project which contains the code to "build" an installable BizDock image
+# Bizdock installation
+
+This project contains:
+* the Dockerfiles for the two BizDock application containers

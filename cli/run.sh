@@ -225,7 +225,7 @@ if [ "$DISTANT_DB" = "false" ]; then
       taf/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $(whoami)
 
     #wait 15 seconds to give time to DB to start correctly before bizdock
-    echo ">> Wait 15 seconds to give time to database container to initialize"
+    echo ">> Wait 15 seconds to ensure that the database container is started"
     sleep 15
 
     #test if db container is up
