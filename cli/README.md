@@ -24,7 +24,7 @@ You can give different arguments to the ```run.sh``` script :
 
 * ```-a``` : BizDock instance name (default is "default"), required if you intend to run multiple instances on the same host
 * ```-v``` : version of the BizDock image (default is "latest")
-* ```-P``` : define the port on which you will access BizDock on your host (be careful to modify the configuration files as explained in the [development folder](https://github.com/theAgileFactory/bizdock-docker/blob/master/development-bizdock-image/README.md)
+* ```-P``` : define the port on which you will access BizDock on your host
 * ```-d``` : start a basic database container with default options (user: maf, password: maf)
 * ```-s``` : define the database schema (name of the database)
 * ```-u``` : define the user of the database (default: maf)
