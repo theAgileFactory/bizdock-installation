@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the maf-file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-x - interactive mode (default is true)\n\t-h - help' 
+HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-u - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the maf-file-system volume on the host (MANDATORY)\n\t-k - additional parameters to be added to BizDock binary\n\t-i - reset and initialize database with default data (default is false)\n\t-x - interactive mode (default is true)\n\t-h - help' 
 
 INSTANCE_NAME='default'
 DOCKER_VERSION='latest'
@@ -18,6 +18,8 @@ DB_DUMPS=""
 MAF_FS=""
 BIZDOCK_PORT=8080
 BIZDOCK_PORT_DEFAULT=8080
+BIZDOCK_PUBLIC_URL=""
+BIZDOCK_BIN_PARAMETERS=""
 DISTANT_DB=false
 CONFIGURE_DB=false
 INTERACTIVE_MODE=true
@@ -30,7 +32,7 @@ then
 fi
 
 # Process the arguments
-while getopts ":P:a:v:s:u:p:r:H:c:m:b:dhxi" option
+while getopts ":P:u:k:a:v:s:u:p:r:H:c:m:b:dhxi" option
 do
   case $option in
     a)
@@ -108,6 +110,12 @@ do
         exit 1
       fi
       ;;
+    u)
+      BIZDOCK_PUBLIC_URL="$OPTARG"
+      ;;
+    k)
+      BIZDOCK_BIN_PARAMETERS="$OPTARG"
+      ;;
     h)
       echo "$HELP"
       exit 0
@@ -156,6 +164,11 @@ fi
 if [ "$DISTANT_DB" = "false" ]; then
   DB_HOST="${INSTANCE_NAME}_bizdockdb:3306"
 fi
+MYSQL_HOSTNAME=$(echo $DB_HOST | cut -f1 -d:)
+MYSQL_PORT=$(echo $DB_HOST | cut -f2 -d:)
+if [ -z "$BIZDOCK_PUBLIC_URL" ]; then
+  BIZDOCK_PUBLIC_URL="http://localhost:$BIZDOCK_PORT"
+fi
 
 #Here is the configuration to be used
 echo "---- CONFIGURATION ----"
@@ -170,6 +183,9 @@ echo "BIZDOCK_PORT = $BIZDOCK_PORT"
 echo "DISTANT_DB = $DISTANT_DB"
 echo "DB_HOST = $DB_HOST"
 echo "CONFIGURE_DB = $CONFIGURE_DB"
+echo "BIZDOCK_PUBLIC_URL = $BIZDOCK_PUBLIC_URL"
+echo "BIZDOCK_BIN_PARAMETERS = $BIZDOCK_BIN_PARAMETERS"
+
 if [ "$INTERACTIVE_MODE" = "true" ]; then
   read -p "Continue (y/n)?" choice
   case "$choice" in 
@@ -238,8 +254,6 @@ if [ $? -ne 1 ]; then
   docker rm ${INSTANCE_NAME}_bizdock
 fi
 
-MYSQL_HOSTNAME=$(echo $DB_HOST | cut -f1 -d:)
-MYSQL_PORT=$(echo $DB_HOST | cut -f2 -d:)
 docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_network -p $BIZDOCK_PORT:$BIZDOCK_PORT_DEFAULT \
   -v ${CONFIG_VOLUME}:/opt/start-config/ \
   -v ${MAF_FS}:/opt/artifacts/maf-file-system/ \
@@ -250,7 +264,9 @@ docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_net
   -e MYSQL_DATABASE=$DB_NAME \
   -e MYSQL_USER=$DB_USER \
   -e MYSQL_PASSWORD=$DB_USER_PASSWD \
-  -e BIZDOCK_PORT=$BIZDOCK_PORT_DEFAULT \
+  -e BIZDOCK_PORT=$BIZDOCK_PORT \
+  -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
+  -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
   taf/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami)
 
 

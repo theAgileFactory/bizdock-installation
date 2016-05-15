@@ -53,13 +53,19 @@ if [[ ! -z "$userUid" ]] && [[ ! -z "$userName" ]]  ; then
   if [ -z "$START_CONFIG" ]; then
     echo "---- UPDATING THE CONFIGURATION FILES WITH DB HOST AND PASSWORD (in case they have been change with CLI) ----"
     
-    #Changing the application configuration
+    #Changing the environment.conf configuration
     sed "s/db\.default\.url=.*/db\.default\.url=\"jdbc:mysql:\/\/$MYSQL_HOSTNAME:$MYSQL_PORT\/$MYSQL_DATABASE\"/g" /opt/maf/maf-desktop/conf/environment.conf > tmp.cfg
     mv tmp.cfg /opt/maf/maf-desktop/conf/environment.conf
     sed "s/username=.*/username=\"$MYSQL_USER\"/g" /opt/maf/maf-desktop/conf/environment.conf > tmp.cfg
     mv tmp.cfg /opt/maf/maf-desktop/conf/environment.conf
     sed "s/password=.*/password=\"$MYSQL_PASSWORD\"/g" /opt/maf/maf-desktop/conf/environment.conf > tmp.cfg
     mv tmp.cfg /opt/maf/maf-desktop/conf/environment.conf
+
+    #Changing the framework.conf configuration
+    sed "s/maf\.public\.url=.*/maf\.public\.url=\"http:\/\/localhost:$BIZDOCK_PORT\"/g" /opt/maf/maf-desktop/conf/framework.conf > tmp.cfg
+    mv tmp.cfg /opt/maf/maf-desktop/conf/framework.conf
+    sed "s/swagger\.api\.basepath=.*/swagger\.api\.basepath=\"http:\/\/localhost:$BIZDOCK_PORT\"/g" /opt/maf/maf-desktop/conf/framework.conf > tmp.cfg
+    mv tmp.cfg /opt/maf/maf-desktop/conf/framework.conf
 
     #Changing the dbmdl-framework configuration
     sed "s/url=.*/url=jdbc:mysql:\/\/$MYSQL_HOSTNAME:$MYSQL_PORT\/$MYSQL_DATABASE/g" /opt/maf/dbmdl-framework/repo/environments/deploy.properties > tmp.cfg
@@ -84,11 +90,8 @@ if [[ ! -z "$userUid" ]] && [[ ! -z "$userName" ]]  ; then
   else
     cp /opt/start-config/dbmdl-framework/deploy.properties /opt/maf/dbmdl-framework/repo/environments
     cp /opt/start-config/maf-dbmdl/deploy.properties /opt/maf/maf-dbmdl/repo/environments
-    cp /opt/start-config/maf-desktop/*.conf /opt/maf/maf-desktop/server/maf-desktop-app-dist/conf && cp /opt/start-config/maf-desktop/*.xml /opt/maf/maf-desktop/server/maf-desktop-app-dist/conf
-    cp /opt/start-config/maf-desktop/*.conf /opt/maf/maf-desktop/conf && cp /opt/start-config/maf-desktop/*.xml /opt/maf/maf-desktop/conf
+    cp -Rf /opt/start-config/maf-desktop/* /opt/maf/maf-desktop/conf
     chown -R $userName.$userName /opt/maf/
-
-    echo "---- CHECKING THE CONSISTENCY BETWEEN CLI PARAMETERS AND CONFIGURATION FILES ----"
   fi  
 
   echo "---- REFRESHING THE DATABASE ----"
@@ -168,7 +171,7 @@ EOF
   ls /opt/artifacts/maf-file-system/$EXTENSIONS_FOLDER
 
   echo "---- LAUNCHING BIZDOCK APPLICATION ----"
-  /opt/maf/maf-desktop/server/maf-desktop-app-dist/bin/maf-desktop-app -Dcom.agifac.appid=maf-desktop-docker -Dconfig.file=/opt/maf/maf-desktop/server/maf-desktop-app-dist/conf/application.conf -Dlogger.file=/opt/maf/maf-desktop/server/maf-desktop-app-dist/conf/application-logger.xml -Dhttp.port=$BIZDOCK_PORT -DapplyEvolutions.default=false
+  /opt/maf/maf-desktop/server/maf-desktop-app-dist/bin/maf-desktop-app -Dcom.agifac.appid=maf-desktop-docker -Dconfig.file=/opt/maf/maf-desktop/conf/application.conf -Dlogger.file=/opt/maf/maf-desktop/conf/application-logger.xml -Dhttp.port=$BIZDOCK_PORT -DapplyEvolutions.default=false
 else
   echo "You should use a valid user"
 fi
