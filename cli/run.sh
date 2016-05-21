@@ -1,6 +1,19 @@
 #!/bin/sh
 
-HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-u - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the maf-file-system volume on the host (MANDATORY)\n\t-k - additional parameters to be added to BizDock binary\n\t-i - reset and initialize database with default data (default is false)\n\t-x - interactive mode (default is true)\n\t-h - help' 
+#------------------------
+# ADVANCED PARAMETERS
+#------------------------
+
+#Parameters to be added to the docker run command line (please refer to Docker documentation)
+DOCKER_RUN_PARAMETERS=""
+
+#Parameters to be added to the BizDock binary command line
+#BizDock is a play framework applicaton, please refer to play documentation (https://www.playframework.com/)
+BIZDOCK_BIN_PARAMETERS=""
+
+#------------------------
+
+HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-u - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-x - interactive mode (default is true)\n\t-h - help' 
 
 INSTANCE_NAME='default'
 DOCKER_VERSION='latest'
@@ -19,7 +32,6 @@ MAF_FS=""
 BIZDOCK_PORT=8080
 BIZDOCK_PORT_DEFAULT=8080
 BIZDOCK_PUBLIC_URL=""
-BIZDOCK_BIN_PARAMETERS=""
 DISTANT_DB=false
 CONFIGURE_DB=false
 INTERACTIVE_MODE=true
@@ -32,7 +44,7 @@ then
 fi
 
 # Process the arguments
-while getopts ":P:u:k:a:v:s:u:p:r:H:c:m:b:dhxi" option
+while getopts ":P:u:k:a:v:s:u:p:r:H:c:m:b:x:dhi" option
 do
   case $option in
     a)
@@ -113,12 +125,12 @@ do
     u)
       BIZDOCK_PUBLIC_URL="$OPTARG"
       ;;
-    k)
-      BIZDOCK_BIN_PARAMETERS="$OPTARG"
-      ;;
     h)
       echo "$HELP"
       exit 0
+      ;;
+    x)
+      INTERACTIVE_MODE="$OPTARG"
       ;;
     i)
       CONFIGURE_DB=true
@@ -134,21 +146,8 @@ do
   esac
 done
 
-#Check mandatory attributes
-if [ ! -d "$MAF_FS" ]; then
-  echo ">> Invalid maf filesystem folder path (see -m command line parameter)."
-  exit 1
-fi
-if [ ! -d "$CONFIG_VOLUME" ]; then
-  echo ">> Invalid configuration folder path (see -c command line parameter)."
-  exit 1
-fi
-if [ ! -d "$DB_DUMPS" ]; then
-  echo ">> Invalid database dump folder path (see -b command line parameter)."
-  exit 1
-fi
-
 #Set defaults if needed
+echo -e "\n\n---- COMPUTING CONFIGURATION ----\n"
 if [ -z "$DB_NAME" ]; then
   DB_NAME=$DB_NAME_DEFAULT
 fi
@@ -169,9 +168,27 @@ MYSQL_PORT=$(echo $DB_HOST | cut -f2 -d:)
 if [ -z "$BIZDOCK_PUBLIC_URL" ]; then
   BIZDOCK_PUBLIC_URL="http://localhost:$BIZDOCK_PORT"
 fi
+if [ ! -d "$MAF_FS" ]; then
+  echo -e ">> WARNING : No valid filesystem folder path (see -m command line parameter).\nA default folder will be created (if it does not exists) : $PWD/fs\n"
+  MAF_FS="$PWD/fs"
+fi
+if [ ! -d "$CONFIG_VOLUME" ]; then
+  echo -e ">> WARNING : No valid configuration folder path (see -c command line parameter).\nA default folder will be created (if it does not exists) : $PWD/cfg\n"
+  CONFIG_VOLUME="$PWD/cfg"
+fi
+if [ ! -d "$DB_DUMPS" ]; then
+  echo -e ">> WARNING : No valid database dump folder path (see -b command line parameter).\nA default folder will be created (if it does not exists) : $PWD/db\n"
+  DB_DUMPS="$PWD/db"
+fi
+
+#Check if the instance name already exists
+INSTANCE_TEST=$(docker ps -a | grep -e "${INSTANCE_NAME}_bizdock$")
+if [ $? -eq 0 ]; then
+  echo ">> WARNING : the instance name $INSTANCE_NAME is already in use and will be deleted !"
+fi
 
 #Here is the configuration to be used
-echo "---- CONFIGURATION ----"
+echo -e "\n\n---- PROPOSED CONFIGURATION ----\n"
 echo "INSTANCE_NAME = $INSTANCE_NAME"
 echo "DOCKER_VERSION= $DOCKER_VERSION"
 echo "DB_NAME = $DB_NAME"
@@ -185,6 +202,7 @@ echo "DB_HOST = $DB_HOST"
 echo "CONFIGURE_DB = $CONFIGURE_DB"
 echo "BIZDOCK_PUBLIC_URL = $BIZDOCK_PUBLIC_URL"
 echo "BIZDOCK_BIN_PARAMETERS = $BIZDOCK_BIN_PARAMETERS"
+echo "DOCKER_RUN_PARAMETERS = $DOCKER_RUN_PARAMETERS"
 
 if [ "$INTERACTIVE_MODE" = "true" ]; then
   read -p "Continue (y/n)?" choice
@@ -194,25 +212,36 @@ if [ "$INTERACTIVE_MODE" = "true" ]; then
   esac
 fi
 
+#Starting the installation
+echo -e "\n\n---- INSTALLATION ----\n"
+
+#Create the volume folders if they do not exists
+mkdir -p $MAF_FS
+mkdir -p $CONFIG_VOLUME
+mkdir -p $DB_DUMPS
+
 #Create network
-NETWORK_TEST=$(docker network ls | grep ${INSTANCE_NAME}_bizdock_network)
+NETWORK_TEST=$(docker network ls | grep -e "${INSTANCE_NAME}_bizdock_network")
 if [ $? -eq 1 ]; then
   echo "---- NETWORK CREATION ----"
   docker network create ${INSTANCE_NAME}_bizdock_network
 fi
 
-#Run Bizdock Database
+#Run Bizdock Database Container if requested
 if [ "$DISTANT_DB" = "false" ]; then
+  echo "---- DATABASE VOLUME CREATION (if it does not exists) ----"
   docker volume create --name=${INSTANCE_NAME}_bizdock_database
 
   INSTANCE_TEST=$(docker ps | grep -e "${INSTANCE_NAME}_bizdockdb$")
   if [ $? -eq 1 ]; then
-    INSTANCE_TEST=$(docker ps -a | grep -e "${INSTANCE_NAME}_bizdockdb")
+    INSTANCE_TEST=$(docker ps -a | grep -e "${INSTANCE_NAME}_bizdockdb$")
     if [ $? -eq 0 ]; then
+      echo ">>> Deleting the stopped database container ${INSTANCE_NAME}_bizdockdb..."
       docker rm ${INSTANCE_NAME}_bizdockdb
+      echo "... ${INSTANCE_NAME}_bizdockdb is deleted !"
     fi
     echo "---- RUNNING DATABASE CONTAINER ----"
-    echo ">> By default, the database dump is done every day at 2 am."
+    echo ">> Starting the database container ${INSTANCE_NAME}_bizdockdb ..."
     docker run --name=${INSTANCE_NAME}_bizdockdb -d --net=${INSTANCE_NAME}_bizdock_network \
       -v ${INSTANCE_NAME}_bizdock_database:/var/lib/mysql/ \
       -v ${DB_DUMPS}:/var/opt/db/dumps/ \
@@ -222,7 +251,8 @@ if [ "$DISTANT_DB" = "false" ]; then
       -e MYSQL_USER="$DB_USER" \
       -e MYSQL_PASSWORD="$DB_USER_PASSWD" \
       -e MYSQL_DATABASE="$DB_NAME" \
-      taf/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $(whoami)
+      taf/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
+    echo "... start command completed"
 
     #wait 15 seconds to give time to DB to start correctly before bizdock
     echo ">> Wait 15 seconds to ensure that the database container is started"
@@ -234,26 +264,33 @@ if [ "$DISTANT_DB" = "false" ]; then
       exit 1
     fi
   else
-    echo ">> The database container is already running. If this is not the case, please remove it with the command 'docker rm ${INSTANCE_NAME}_bizdockdb'"
+    echo ">> A database container is already running, it will be reused.\n If are not willing this, please stop it using the docker command line :'docker stop ${INSTANCE_NAME}_bizdockdb'"
   fi
 
   IS_TABLE=$(docker exec -it ${INSTANCE_NAME}_bizdockdb mysql -h localhost -P 3306 -u "$DB_USER" -p"$DB_USER_PASSWD" -D "$DB_NAME" -e 'show tables;')
   if [ -z "$IS_TABLE" ]; then
     CONFIGURE_DB=true
   fi
-
-else
-  echo "/!\\ WARNING: you will have to modify the BizDock configuration to target the remove database and restart the container /!\\"
 fi
 
-#Run Bizdock
+#Running Bizdock application container
 echo "---- RUNNING BIZDOCK ----"
-INSTANCE_TEST=$(docker ps -a | grep -e "${INSTANCE_NAME}_bizdock$")
-if [ $? -ne 1 ]; then
+INSTANCE_TEST=$(docker ps | grep -e "${INSTANCE_NAME}_bizdock$")
+if [ $? -eq 0 ]; then
+  echo ">>> Stopping the existing BizDock application container ${INSTANCE_NAME}_bizdock..."
   docker stop ${INSTANCE_NAME}_bizdock
+  echo "... blocking until the container is stopped..."
+  docker wait ${INSTANCE_NAME}_bizdock
+  echo "... ${INSTANCE_NAME}_bizdock is stopped !"
+fi
+INSTANCE_TEST=$(docker ps -a | grep -e "${INSTANCE_NAME}_bizdock$")
+if [ $? -eq 0 ]; then
+  echo ">>> Deleting the existing application container ${INSTANCE_NAME}_bizdock..."
   docker rm ${INSTANCE_NAME}_bizdock
+  echo "... ${INSTANCE_NAME}_bizdock is deleted !"
 fi
 
+echo ">> Starting the container ${INSTANCE_NAME}_bizdock ..."
 docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_network -p $BIZDOCK_PORT:$BIZDOCK_PORT_DEFAULT \
   -v ${CONFIG_VOLUME}:/opt/start-config/ \
   -v ${MAF_FS}:/opt/artifacts/maf-file-system/ \
@@ -267,6 +304,8 @@ docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_net
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
-  taf/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami)
+  taf/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
+echo "... start command completed"
+
 
 
