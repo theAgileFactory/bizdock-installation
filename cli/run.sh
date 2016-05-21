@@ -290,6 +290,11 @@ if [ $? -eq 0 ]; then
   echo "... ${INSTANCE_NAME}_bizdock is deleted !"
 fi
 
+#Creating a crypto key for play
+echo ">> Creating a crypto key for BizDock..."
+BIZDOCK_CRYPTO_KEY=$(docker run -t -i taf/bizdockutils:1.0 /opt/crypto.sh | tr -d '[:cntrl:]')
+echo "... done !"
+
 echo ">> Starting the container ${INSTANCE_NAME}_bizdock ..."
 docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_network -p $BIZDOCK_PORT:$BIZDOCK_PORT_DEFAULT \
   -v ${CONFIG_VOLUME}:/opt/start-config/ \
@@ -304,6 +309,7 @@ docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_net
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
+  -e BIZDOCK_CRYPTO_KEY=$BIZDOCK_CRYPTO_KEY \
   taf/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
 echo "... start command completed"
 

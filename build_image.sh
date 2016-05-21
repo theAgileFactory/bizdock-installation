@@ -12,6 +12,15 @@ if [ $STATUS -ne 0 ]; then
 fi
 
 echo "----------------------------------------"
+echo " Building the BizDock Utils image          "
+echo "----------------------------------------"
+docker build -f ./bizdockutils/Dockerfile -t taf/bizdockutils:1.0 .
+STATUS=$?
+if [ $STATUS -ne 0 ]; then
+  exit 1
+fi
+
+echo "----------------------------------------"
 echo " Building the BizDock DB image          "
 echo "----------------------------------------"
 docker build -f ./bizdockdb/Dockerfile -t taf/bizdock_mariadb:10.1.12 .
