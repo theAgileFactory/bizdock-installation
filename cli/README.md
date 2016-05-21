@@ -71,9 +71,9 @@ This would break the installation and may corrupt your data.
 Backing up a BizDock instance consists in:
 * backing up the database (if you are using the default BizDock database container, see below)
 * backing up the 3 mounted folders:
-   * The database dump folder (see option ```-b``` of the script)
-   * The configuration folder (see option ```-b``` of the script)
-   * The BizDock file system folder (see option ```-b``` of the script)
+   * The database dump folder (see option ```-b``` of the ```run.sh``` script)
+   * The configuration folder (see option ```-c``` of the ```run.sh``` script)
+   * The BizDock file system folder (see option ```-c``` of the ```run.sh``` script)
 
 
 ## Stop a BizDock instance
@@ -84,8 +84,8 @@ This one will stop and then delete the application and database containers (if t
 IMPORTANT: the volumes and network are NOT removed.
 You need to clean them manually.
 Here are the name patterns for these objects:
-* ```<<instance name>>_BizDock_database``` for the BizDock database volume (which is persisting the database data)
-* ```<<instance name>>_BizDock_network``` for the BizDock bridge network which is dedicated to one instance
+* ```<<instance name>>_bizdock_database``` for the BizDock database volume (which is persisting the database data)
+* ```<<instance name>>_bizbock_network``` for the BizDock bridge network which is dedicated to one instance
 
 
 ## Database
@@ -95,15 +95,19 @@ In addition of the official Docker image of MariaDB, we add to our image a cron 
 
 ### Forcing the database backup
 
-/var/opt/db/cron/mysqldump_db.sh
+To force a database backup you should run the following command:
 
+```docker exec <<instance name>>_bizdockdb /var/opt/db/cron/mysqldump_db.sh```
+
+where ```<<instance name>>``` is the name of your BizDock instance.
+
+This will create a database dump in your "dump" folder (see ```run.sh``` parameters).
 
 ### Changing the database dump frequency
 
 By default, the dump is done every day at 2 AM.
 If you want to modify it, you simply need to modify the ```crontabFile``` in the database dump mount and restart the database container matching your instance (```docker restart <<instance name>>_bizdockdb```).
 The file is located on the path you chose for parameter ```-b```.
-
 
 ## Configuration files
 

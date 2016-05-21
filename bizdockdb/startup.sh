@@ -35,7 +35,8 @@ if [[ ! -z "$userUid" ]] && [[ ! -z "$userName" ]]  ; then
 
   #create script for mysqldump
   if [ ! -e /var/opt/db/cron/mysqldump_db.sh ]; then
-    echo "export BACKUP_DIR=/var/opt/db/dumps/" > /var/opt/db/cron/mysqldump_db.sh
+    echo '#!/bin/bash' > /var/opt/db/cron/mysqldump_db.sh
+    echo "export BACKUP_DIR=/var/opt/db/dumps/" >> /var/opt/db/cron/mysqldump_db.sh
     echo "find \$BACKUP_DIR -name \"maf*\" -mtime +10 |xargs rm -rf" >> /var/opt/db/cron/mysqldump_db.sh
     echo "mysqldump -R -h localhost -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE | gzip > \$BACKUP_DIR/maf_\`date +%F\`.gz" >> /var/opt/db/cron/mysqldump_db.sh
     chmod +x /var/opt/db/cron/mysqldump_db.sh
