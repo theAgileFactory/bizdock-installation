@@ -9,13 +9,28 @@ BizDock requires a Docker engine version > 1.10 on a Linux host.
 
 > Other systems have not been tested yet but may also work.
 
-## Run the Docker container
+
+## BizDock containers
+
+The BizDock installation consists into:
+* at least one container named ```<<instance name>>_bizdock``` which is running the BizDock application
+* optionally (if you do not specify a distant database to the ```run.sh``` script) a MariaDB database container named ```<<instance name>>_bizdockdb```
+
+```<<instance name>>``` is the name of the BizDock instance you are creating.
+By default the ```run.sh``` script will attempt to create an instance named ```default```.
+
+
+## Run a BizDock instance
 
 To run BizDock, you need to use the ```run.sh``` script.
 Use the ```-h``` flag to display the help.
 
 By default this script will run two containers on the same host : one for the database and one for the application.
 It is however possible to  use a database installed on a different host.
+If the application container already exists, it will be stopped and the deleted.
+If the database container already exists:
+* if it is stopped it is deleted
+* if it is started it is reused
 
 ### Usage
 
@@ -29,40 +44,81 @@ You can give different arguments to the ```run.sh``` script :
 * ```-u``` : define the user of the database (default: maf)
 * ```-p``` : define the password for the database user (default: maf)
 * ```-r``` : define the password for the database user root
-* ```-b``` : define a mount point (on your host) where to store cron job for database dumps
 * ```-H``` : define the database host and port (ex.: HOST:PORT)
+* ```-b``` : define a mount point (on your host) where to store cron job for database dumps
 * ```-c``` : define a mount point (on your host) where to store configuration files
-* ```-m``` : define a mount point (on your host) where the maf-file-system is stored
-* ```-k``` : additional parameters to be added to BizDock binary
+* ```-m``` : define a mount point (on your host) where the BizDock file system is stored
 * ```-i``` : reset and initialize the database (warning: this will erase the database)
 * ```-k``` : interactive mode (default is true) - will request the valitation of the user before running the installation
 * ```-h``` : print help
+
+IMPORTANT : you can modify the ```run.sh``` script for specific situations where you need to:
+* provide some specific parameters to the BizDock application GUI (example: for proxy configuration)
+* provide some specific parameters to the Docker containers run commands (example: changing the log driver)
+
+
+## Upgrade a BizDock instance
+
+To upgrade a BizDock instance, simply run ```run.sh``` script again.
+The old containers will be removed and the new version installed.
+
+WARNING: do not execute ```run.sh``` with an older version of BizDock than the one currently installed.
+This would break the installation and may corrupt your data.
+
+
+## Backup a BizDock instance
+
+Backing up a BizDock instance consists in:
+* backing up the database (if you are using the default BizDock database container, see below)
+* backing up the 3 mounted folders:
+   * The database dump folder (see option ```-b``` of the script)
+   * The configuration folder (see option ```-b``` of the script)
+   * The BizDock file system folder (see option ```-b``` of the script)
+
+
+## Stop a BizDock instance
+
+To stop a BizDock instance, you need to use the ```stop.sh``` script.
+This one will stop and then delete the application and database containers (if this one exists).
+
+IMPORTANT: the volumes and network are NOT removed.
+You need to clean them manually.
+Here are the name patterns for these objects:
+* ```<<instance name>>_BizDock_database``` for the BizDock database volume (which is persisting the database data)
+* ```<<instance name>>_BizDock_network``` for the BizDock bridge network which is dedicated to one instance
+
 
 ## Database
 
 [MariaDB](https://mariadb.org/) is the database used by BizDock.
 In addition of the official Docker image of MariaDB, we add to our image a cron job to make dumps of the database.
 
+### Forcing the database backup
+
+/var/opt/db/cron/mysqldump_db.sh
+
+
+### Changing the database dump frequency
+
 By default, the dump is done every day at 2 AM.
-If you want to modify it, you simply need to modify the ```crontabFile``` on your host and restart the database container (```docker restart bizdockdb```).
+If you want to modify it, you simply need to modify the ```crontabFile``` in the database dump mount and restart the database container matching your instance (```docker restart <<instance name>>_bizdockdb```).
 The file is located on the path you chose for parameter ```-b```.
+
 
 ## Configuration files
 
-You can set a folder on your host where to store the configuration files using the ```-c``` flag.
-After running bizdock once, you will find in this folder the default configurations files.
-Then, you can configure BizDock as you wish.
-To enable the modifications, you simply need to restart the container using ```docker restart bizdock``` or using the ```run.sh``` script.
+You must set a folder on your host where to store the configuration files using the ```-c``` flag.
+After running BizDock once, you will find in this folder the default configurations files.
+You may the modify the BizDock configuration.
+To enable the modifications, you simply need to restart the container using the ```run.sh``` script.
 
 ### Note
 
-This is important to write paths with a ```/``` at the end of them to allow the folders creation for the ```maf-file-system```.
-
 This is also important to keep consistency between arguments you give to the ```run.sh``` script and the configuration files (ports, user of the database,...).
+
 
 ## Logs
 
 To get logs of containers, you can run ```docker logs <container-name>```.
 You can find further informations on the [official documentation](https://docs.docker.com/engine/reference/commandline/logs/).
 
-It is up to you to configure a tool to manage logs.
