@@ -73,7 +73,7 @@ Backing up a BizDock instance consists in:
 * backing up the 3 mounted folders:
    * The database dump folder (see option ```-b``` of the ```run.sh``` script)
    * The configuration folder (see option ```-c``` of the ```run.sh``` script)
-   * The BizDock file system folder (see option ```-c``` of the ```run.sh``` script)
+   * The BizDock file system folder (see option ```-m``` of the ```run.sh``` script)
 
 
 ## Stop a BizDock instance
