@@ -1,6 +1,6 @@
 FROM mariadb:10.1
 
-MAINTAINER Marc Schaer <marc.schar@the-agile-factory.com>
+MAINTAINER Marc Schaer
 
 #Create volumes for storing cron jobs and the database dumps
 VOLUME /var/opt/db/cron/

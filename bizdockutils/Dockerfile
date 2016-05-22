@@ -1,6 +1,6 @@
 FROM centos:7
 
-MAINTAINER Pierre-Yves Cloux <pierre-yves.cloux@the-agile-factory.com>
+MAINTAINER Pierre-Yves Cloux
 
 #Install the EPEL repository
 RUN yum update -y && yum install -y --setopt=tsflags=nodocs epel-release && yum clean all

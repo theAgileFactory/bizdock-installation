@@ -1,6 +1,6 @@
 FROM centos:7
 
-MAINTAINER Marc Schaer <marc.schar@the-agile-factory.com>
+MAINTAINER Marc Schaer
 
 #Create volumes
 VOLUME /opt/start-config/
