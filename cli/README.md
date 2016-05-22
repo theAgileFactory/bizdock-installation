@@ -116,6 +116,14 @@ After running BizDock once, you will find in this folder the default configurati
 You may the modify the BizDock configuration.
 To enable the modifications, you simply need to restart the container using the ```run.sh``` script.
 
+### Default user
+
+The installation creates a user:
+* login : admin
+* password : admin123
+
+> WARNING: change it once your installation is started
+
 ### Note
 
 This is also important to keep consistency between arguments you give to the ```run.sh``` script and the configuration files (ports, user of the database,...).
