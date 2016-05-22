@@ -29,8 +29,9 @@ The BizDock installation consists into:
 * at least one container named ```<<instance name>>_bizdock``` which is running the BizDock application
 * optionally (if you do not specify a distant database to the ```run.sh``` script) a MariaDB database container named ```<<instance name>>_bizdockdb```
 
-```<<instance name>>``` is the name of the BizDock instance you are creating.
-By default the ```run.sh``` script will attempt to create an instance named ```default```.
+> ```<<instance name>>``` is the name of the BizDock instance you are creating.
+
+> By default the ```run.sh``` script will attempt to create an instance named ```default```.
 
 
 ## Run a BizDock instance
@@ -39,13 +40,30 @@ To run BizDock, you need to use the ```run.sh``` script.
 Use the ```-h``` flag to display the help.
 
 By default this script will run two containers on the same host : one for the database and one for the application.
-It is however possible to  use a database installed on a different host.
+It is however possible to  use a database installed on a different host (please see the option ```-H``` of the ```run.sh``` script).
 If the application container already exists, it will be stopped and the deleted.
 If the database container already exists:
 * if it is stopped it is deleted
 * if it is started it is reused
 
-### Usage
+### Default
+
+Running the ```run.sh``` without any option will:
+* a container ```default_bizdock``` (for the BizDock application container), this one will listen on the port ```8080```
+* a container ```default_bizdockdb``` with the default password for ```maf``` and ```root```
+* a docker network named ```default_bizdock_network```
+* a docker volume (for the database data) named ```default_bizdock_database```
+* a folder (in the folder where you run the script) named ```cfg``` containing the BizDock configuration files
+* a folder (in the folder where you run the script) named ```fs``` containing the BizDock file system (file attachements for instance)
+* a folder (in the folder where you run the script) named ```db``` containing the database dumps (backup) as well as the configuration script for the Cronjob managing the backup and the script used for the backup
+
+### Interactive mode
+
+By default the ```run.sh``` script run in interactive mode.
+
+Before running the installation it will displays all the parameters and request a validation from the end user.
+
+### options
 
 You can give different arguments to the ```run.sh``` script :
 
@@ -57,7 +75,7 @@ You can give different arguments to the ```run.sh``` script :
 * ```-u``` : define the user of the database (default: maf)
 * ```-p``` : define the password for the database user (default: maf)
 * ```-r``` : define the password for the database user root
-* ```-H``` : define the database host and port (ex.: HOST:PORT)
+* ```-H``` : define the database host and port (ex.: HOST:PORT) if you are using your own database (not the default BizDock database container)
 * ```-b``` : define a mount point (on your host) where to store cron job for database dumps
 * ```-c``` : define a mount point (on your host) where to store configuration files
 * ```-m``` : define a mount point (on your host) where the BizDock file system is stored
