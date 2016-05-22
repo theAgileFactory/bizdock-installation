@@ -251,7 +251,7 @@ if [ "$DISTANT_DB" = "false" ]; then
       -e MYSQL_USER="$DB_USER" \
       -e MYSQL_PASSWORD="$DB_USER_PASSWD" \
       -e MYSQL_DATABASE="$DB_NAME" \
-      taf/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
+      bizdock/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
     echo "... start command completed"
 
     #wait 15 seconds to give time to DB to start correctly before bizdock
@@ -292,7 +292,7 @@ fi
 
 #Creating a crypto key for play
 echo ">> Creating a crypto key for BizDock..."
-BIZDOCK_CRYPTO_KEY=$(docker run -t -i taf/bizdockutils:1.0 /opt/crypto.sh | tr -d '[:cntrl:]')
+BIZDOCK_CRYPTO_KEY=$(docker run -t -i bizdock/bizdockutils:1.0 /opt/crypto.sh | tr -d '[:cntrl:]')
 echo "... done !"
 
 echo ">> Starting the container ${INSTANCE_NAME}_bizdock ..."
@@ -310,7 +310,7 @@ docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_net
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
   -e BIZDOCK_CRYPTO_KEY=$BIZDOCK_CRYPTO_KEY \
-  taf/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
+  bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
 echo "... start command completed"
 
 

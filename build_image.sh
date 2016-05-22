@@ -14,7 +14,7 @@ fi
 echo "----------------------------------------"
 echo " Building the BizDock Utils image          "
 echo "----------------------------------------"
-docker build -f ./bizdockutils/Dockerfile -t taf/bizdockutils:1.0 .
+docker build -f ./bizdockutils/Dockerfile -t bizdock/bizdockutils:1.0 .
 STATUS=$?
 if [ $STATUS -ne 0 ]; then
   exit 1
@@ -23,7 +23,7 @@ fi
 echo "----------------------------------------"
 echo " Building the BizDock DB image          "
 echo "----------------------------------------"
-docker build -f ./bizdockdb/Dockerfile -t taf/bizdock_mariadb:10.1.12 .
+docker build -f ./bizdockdb/Dockerfile -t bizdock/bizdock_mariadb:10.1.12 .
 STATUS=$?
 if [ $STATUS -ne 0 ]; then
   exit 1
@@ -75,7 +75,7 @@ cp target/dependency/maf-defaultplugins-extension-*.jar bizdock/
 
 echo ">>>> SETP-2.2 : Building the BizDock image"
 BIZDOCK_VERSION=$(cat target/version.properties)
-docker build -f ./bizdock/Dockerfile -t taf/bizdock:${BIZDOCK_VERSION} .
+docker build -f ./bizdock/Dockerfile -t bizdock/bizdock:${BIZDOCK_VERSION} .
 STATUS=$?
 if [ $STATUS -ne 0 ]; then
   exit 1
