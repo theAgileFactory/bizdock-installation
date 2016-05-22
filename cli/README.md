@@ -62,7 +62,7 @@ Running the ```run.sh``` without any option will:
 
 By default the ```run.sh``` script run in interactive mode.
 
-Before running the installation it will displays all the parameters and request a validation from the end user.
+Before running the installation it will display the parameters for the installation and request a validation before proceeding.
 
 ### Options
 
