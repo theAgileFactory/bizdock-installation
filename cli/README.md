@@ -3,6 +3,16 @@
 The BizDock command line consists in a shell script : ```run.sh```.
 This script is to be used to run the BizDock application which consists in one or two containers (depending on the selected options).
 
+**[Pre-requisites](#pre-requisites)**
+**[BizDock containers](#bizdock-containers)**
+**[Run a BizDock instance](#run-instance)**
+**[Upgrade a BizDock instance](#upgrade-instance)**
+**[Backup a BizDock instance](#backup-instance)**
+**[Stop a BizDock instance](#stop-instance)**
+**[Database](#database)**
+**[Configuration files](#config-files)**
+**[Logs](#logs)**
+
 ## Pre-requisites
 
 BizDock requires a Docker engine version > 1.10 on a Linux host.
