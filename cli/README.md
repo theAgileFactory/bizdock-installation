@@ -41,7 +41,9 @@ Use the ```-h``` flag to display the help.
 
 By default this script will run two containers on the same host : one for the database and one for the application.
 It is however possible to  use a database installed on a different host (please see the option ```-H``` of the ```run.sh``` script).
+
 If the application container already exists, it will be stopped and the deleted.
+
 If the database container already exists:
 * if it is stopped it is deleted
 * if it is started it is reused
@@ -91,11 +93,10 @@ IMPORTANT : you can modify the ```run.sh``` script for specific situations where
 
 ## Upgrade a BizDock instance
 
-To upgrade a BizDock instance, simply run ```run.sh``` script again.
+To upgrade a BizDock instance, simply run the ```run.sh``` script again.
 The old containers will be removed and the new version installed.
 
-WARNING: do not execute ```run.sh``` with an older version of BizDock than the one currently installed.
-This would break the installation and may corrupt your data.
+WARNING: do not execute ```run.sh``` with an older version (see parameter ```-v```) of BizDock than the one currently installed. This would break the installation and may corrupt your data.
 
 
 ## Backup a BizDock instance
@@ -113,17 +114,16 @@ Backing up a BizDock instance consists in:
 To stop a BizDock instance, you need to use the ```stop.sh``` script.
 This one will stop and then delete the application and database containers (if this one exists).
 
-IMPORTANT: the volumes and network are NOT removed.
+IMPORTANT: the **volumes** and **network** are **NOT removed**.
 You need to clean them manually.
 Here are the name patterns for these objects:
 * ```<<instance name>>_bizdock_database``` for the BizDock database volume (which is persisting the database data)
 * ```<<instance name>>_bizbock_network``` for the BizDock bridge network which is dedicated to one instance
 
-
 ## Database
 
 [MariaDB](https://mariadb.org/) is the database used by BizDock.
-In addition of the official Docker image of MariaDB, we add to our image a cron job to make dumps of the database.
+In addition of the official Docker image of MariaDB, we add to our image a cron job to generete automatically some dumps of the database.
 
 ### Forcing the database backup
 
@@ -133,13 +133,22 @@ To force a database backup you should run the following command:
 
 where ```<<instance name>>``` is the name of your BizDock instance.
 
-This will create a database dump in your "dump" folder (see ```run.sh``` parameters).
+This will create a database dump in your "dump" folder (see ```-b``` parameter of the installation script).
 
 ### Changing the database dump frequency
 
 By default, the dump is done every day at 2 AM.
 If you want to modify it, you simply need to modify the ```crontabFile``` in the database dump mount and restart the database container matching your instance (```docker restart <<instance name>>_bizdockdb```).
 The file is located on the path you chose for parameter ```-b```.
+
+### Using a remote database
+
+You can use your own instance of MariaDB (version 10.1.12) instead of the default BizDock database container.
+You can specify the database host and port using the ```-H``` parameter.
+
+Do not forget to specify the:
+* ```-s``` schema name
+* ```-u``` user for accessing this schema
 
 ## Configuration files
 
@@ -156,8 +165,9 @@ The installation creates a user:
 
 > WARNING: change it once your installation is started
 
-### Note
+### IMPORTANT
 
+You can modify the configuration of you BizDock instance in the configuration folder.
 This is also important to keep consistency between arguments you give to the ```run.sh``` script and the configuration files (ports, user of the database,...).
 
 
