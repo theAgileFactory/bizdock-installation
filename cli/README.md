@@ -6,12 +6,12 @@ This script is to be used to run the BizDock application which consists in one o
 
 * [Pre-requisites](#pre-requisites)
 * [BizDock containers](#bizdock-containers)
-* [Run a BizDock instance](#run-instance)
-* [Upgrade a BizDock instance](#upgrade-instance)
-* [Backup a BizDock instance](#backup-instance)
-* [Stop a BizDock instance](#stop-instance)
+* [Run a BizDock instance](#run-a-bizdock-instance)
+* [Upgrade a BizDock instance](#upgrade-a-bizdock-instance)
+* [Backup a BizDock instance](#backup-a-bizdock-instance)
+* [Stop a BizDock instance](#stop-a-bizdock-instance)
 * [Database](#database)
-* [Configuration files](#config-files)
+* [Configuration files](#configuration-files)
 * [Logs](#logs)
 
 ## Pre-requisites
