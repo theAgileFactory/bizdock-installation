@@ -147,3 +147,5 @@ This is also important to keep consistency between arguments you give to the ```
 To get logs of containers, you can run ```docker logs <container-name>```.
 You can find further informations on the [official documentation](https://docs.docker.com/engine/reference/commandline/logs/).
 
+>NB: you can modify the ```run.sh``` script to add some parameters to the ```docker run``` commands defining, for instance, a specific log driver
+
