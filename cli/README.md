@@ -49,13 +49,14 @@ If the database container already exists:
 ### Default
 
 Running the ```run.sh``` without any option will:
-* a container ```default_bizdock``` (for the BizDock application container), this one will listen on the port ```8080```
-* a container ```default_bizdockdb``` with the default password for ```maf``` and ```root```
-* a docker network named ```default_bizdock_network```
-* a docker volume (for the database data) named ```default_bizdock_database```
-* a folder (in the folder where you run the script) named ```cfg``` containing the BizDock configuration files
-* a folder (in the folder where you run the script) named ```fs``` containing the BizDock file system (file attachements for instance)
-* a folder (in the folder where you run the script) named ```db``` containing the database dumps (backup) as well as the configuration script for the Cronjob managing the backup and the script used for the backup
+* create a container ```default_bizdock``` (for the BizDock application container), this one will listen on the port ```8080```
+* create a container ```default_bizdockdb``` with the default password for ```maf``` and ```root```
+* create a docker network named ```default_bizdock_network```
+* create a docker volume (for the database data) named ```default_bizdock_database```
+* create a folder (in the folder where you run the script) named ```cfg``` containing the BizDock configuration files
+* create a folder (in the folder where you run the script) named ```fs``` containing the BizDock file system (file attachments for instance)
+* create a folder (in the folder where you run the script) named ```db``` containing the database dumps (backup) as well as the configuration script for the Cronjob managing the backup and the script used for the backup
+
 
 ### Interactive mode
 
@@ -63,7 +64,7 @@ By default the ```run.sh``` script run in interactive mode.
 
 Before running the installation it will displays all the parameters and request a validation from the end user.
 
-### options
+### Options
 
 You can give different arguments to the ```run.sh``` script :
 
