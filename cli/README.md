@@ -19,6 +19,7 @@ This script is to be used to run the BizDock application which consists in one o
 BizDock requires a Docker engine version > 1.10 on a Linux host.
 
 > Other systems have not been tested yet but may also work.
+> The installation script ```run.sh``` has been tested on CentOS 7 but should run on any bash compatible Linux distribution
 
 
 ## BizDock containers
