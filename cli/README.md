@@ -6,12 +6,12 @@ This script is to be used to create a BizDock application instance which consist
 
 * [Pre-requisites](#pre-requisites)
 * [BizDock containers](#bizdock-containers)
-* [Run a BizDock instance](#run-instance)
-* [Upgrade a BizDock instance](#upgrade-instance)
-* [Backup a BizDock instance](#backup-instance)
-* [Stop a BizDock instance](#stop-instance)
+* [Run a BizDock instance](#run-a-bizdock-instance)
+* [Upgrade a BizDock instance](#upgrade-a-bizdock-instance)
+* [Backup a BizDock instance](#backup-a-bizdock-instance)
+* [Stop a BizDock instance](#stop-a-bizdock-instance)
 * [Database](#database)
-* [Configuration files](#config-files)
+* [Configuration files](#configuration-files)
 * [Logs](#logs)
 
 ## Pre-requisites
@@ -41,7 +41,9 @@ Use the ```-h``` flag to display the help.
 
 By default this script will run two containers on the same host : one for the database and one for the application.
 It is however possible to  use a database installed on a different host (please see the option ```-H``` of the ```create.sh``` script).
+
 If the application container already exists, it will be stopped and the deleted.
+
 If the database container already exists:
 * if it is stopped it is deleted
 * if it is started it is reused
@@ -68,8 +70,10 @@ Running the ```create.sh``` without any option will:
 
 ### Interactive mode
 
-By default the ```create.sh``` script run in interactive mode.
-Before running the installation it will displays all the parameters and request a validation from the end user.
+By default the ```run.sh``` script run in interactive mode.
+
+Before running the installation it will display the parameters for the installation and request a validation before proceeding.
+
 
 ### Options
 
@@ -107,11 +111,13 @@ These two scripts holds all the parameters you defined when creating your instan
 
 To upgrade a BizDock instance.
 The old containers must be removed and the new version installed.
-
 You must edit the ```start-<<instance name>>.sh``` script and change the value of the ```-v``` parameter.
 You can then stop/start BizDock and the upgrade will be automatic.
 
 > NB: by default the version is set to 'latest' which will always upgrade to the last recommended BizDock version
+
+WARNING: do not execute ```run.sh``` with an older version (see parameter ```-v```) of BizDock than the one currently installed. This would break the installation and may corrupt your data.
+
 
 
 ## Backup a BizDock instance
@@ -129,17 +135,16 @@ Backing up a BizDock instance consists in:
 To stop a BizDock instance, you need to use the ```stop.sh``` script.
 This one will stop and then delete the application and database containers (if this one exists).
 
-IMPORTANT: the volumes and network are NOT removed.
+IMPORTANT: the **volumes** and **network** are **NOT removed**.
 You need to clean them manually.
 Here are the name patterns for these objects:
 * ```<<instance name>>_bizdock_database``` for the BizDock database volume (which is persisting the database data)
 * ```<<instance name>>_bizbock_network``` for the BizDock bridge network which is dedicated to one instance
 
-
 ## Database
 
 [MariaDB](https://mariadb.org/) is the database used by BizDock.
-In addition of the official Docker image of MariaDB, we add to our image a cron job to make dumps of the database.
+In addition of the official Docker image of MariaDB, we add to our image a cron job to generete automatically some dumps of the database.
 
 ### Forcing the database backup
 
@@ -149,13 +154,22 @@ To force a database backup you should run the following command:
 
 where ```<<instance name>>``` is the name of your BizDock instance.
 
-This will create a database dump in your "dump" folder (see ```create.sh``` parameters).
+This will create a database dump in your "dump" folder (see ```-b``` parameter of the installation script).
 
 ### Changing the database dump frequency
 
 By default, the dump is done every day at 2 AM.
 If you want to modify it, you simply need to modify the ```crontabFile``` in the database dump mount and restart the database container matching your instance (```docker restart <<instance name>>_bizdockdb```).
 The file is located on the path you chose for parameter ```-b```.
+
+### Using a remote database
+
+You can use your own instance of MariaDB (version 10.1.12) instead of the default BizDock database container.
+You can specify the database host and port using the ```-H``` parameter.
+
+Do not forget to specify the:
+* ```-s``` schema name
+* ```-u``` user for accessing this schema
 
 ## Configuration files
 
