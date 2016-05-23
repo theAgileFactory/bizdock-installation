@@ -1,20 +1,8 @@
 #!/bin/sh
 
-#------------------------
-# ADVANCED PARAMETERS
-#------------------------
+HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-u - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-w - BizDock binary additional parameters\n\t-z - docker run additional parameters\n\t-x - interactive mode (default is true)\n\t-h - help' 
 
-#Parameters to be added to the docker run command line (please refer to Docker documentation)
-DOCKER_RUN_PARAMETERS=""
-
-#Parameters to be added to the BizDock binary command line
-#BizDock is a play framework applicaton, please refer to play documentation (https://www.playframework.com/)
-BIZDOCK_BIN_PARAMETERS=""
-
-#------------------------
-
-HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-u - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-x - interactive mode (default is true)\n\t-h - help' 
-
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 INSTANCE_NAME='default'
 DOCKER_VERSION='latest'
 DB_NAME_DEFAULT='maf'
@@ -35,6 +23,8 @@ BIZDOCK_PUBLIC_URL=""
 DISTANT_DB=false
 CONFIGURE_DB=false
 INTERACTIVE_MODE=true
+DOCKER_RUN_PARAMETERS=""
+BIZDOCK_BIN_PARAMETERS=""
 
 if [ $? != 0 ] # There was an error parsing the options
 then
@@ -44,7 +34,7 @@ then
 fi
 
 # Process the arguments
-while getopts ":P:u:k:a:v:s:u:p:r:H:c:m:b:x:dhi" option
+while getopts ":P:u:k:a:v:s:u:p:r:H:c:m:b:x:w:z:dhi" option
 do
   case $option in
     a)
@@ -129,6 +119,12 @@ do
       echo "$HELP"
       exit 0
       ;;
+    w)
+      BIZDOCK_BIN_PARAMETERS="$OPTARG"
+      ;;
+    z)
+      DOCKER_RUN_PARAMETERS="$OPTARG"
+      ;;
     x)
       INTERACTIVE_MODE="$OPTARG"
       ;;
@@ -189,20 +185,20 @@ fi
 
 #Here is the configuration to be used
 echo -e "\n\n---- PROPOSED CONFIGURATION ----\n"
-echo "INSTANCE_NAME = $INSTANCE_NAME"
-echo "DOCKER_VERSION= $DOCKER_VERSION"
-echo "DB_NAME = $DB_NAME"
-echo "DB_USER = $DB_USER"
-echo "CONFIG_VOLUME = $CONFIG_VOLUME"
-echo "DB_DUMPS= $DB_DUMPS"
-echo "MAF_FS= $MAF_FS"
-echo "BIZDOCK_PORT = $BIZDOCK_PORT"
-echo "DISTANT_DB = $DISTANT_DB"
-echo "DB_HOST = $DB_HOST"
-echo "CONFIGURE_DB = $CONFIGURE_DB"
-echo "BIZDOCK_PUBLIC_URL = $BIZDOCK_PUBLIC_URL"
-echo "BIZDOCK_BIN_PARAMETERS = $BIZDOCK_BIN_PARAMETERS"
-echo "DOCKER_RUN_PARAMETERS = $DOCKER_RUN_PARAMETERS"
+echo "Name of the BizDock instance         = $INSTANCE_NAME"
+echo "Version of BizDock application image = $DOCKER_VERSION"
+echo "Name of the database schema          = $DB_NAME"
+echo "Name of the database user            = $DB_USER"
+echo "Host mount for BizDock configuration = $CONFIG_VOLUME"
+echo "Host mount for database dumps        = $DB_DUMPS"
+echo "Host mount for BizDock file system   = $MAF_FS"
+echo "Port on which BizDock will listen    = $BIZDOCK_PORT"
+echo "True if a distant database is used   = $DISTANT_DB"
+echo "Host of the distant database         = $DB_HOST"
+echo "Reset the database ?                 = $CONFIGURE_DB"
+echo "BizDock public URL                   = $BIZDOCK_PUBLIC_URL"
+echo "BizDock binary special parameters    = $BIZDOCK_BIN_PARAMETERS"
+echo "Docker run commands parameters       = $DOCKER_RUN_PARAMETERS"
 
 if [ "$INTERACTIVE_MODE" = "true" ]; then
   read -p "Continue (y/n)?" choice
@@ -242,7 +238,7 @@ if [ "$DISTANT_DB" = "false" ]; then
     fi
     echo "---- RUNNING DATABASE CONTAINER ----"
     echo ">> Starting the database container ${INSTANCE_NAME}_bizdockdb ..."
-    docker run --name=${INSTANCE_NAME}_bizdockdb -d --net=${INSTANCE_NAME}_bizdock_network \
+    docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdockdb -d --net=${INSTANCE_NAME}_bizdock_network \
       -v ${INSTANCE_NAME}_bizdock_database:/var/lib/mysql/ \
       -v ${DB_DUMPS}:/var/opt/db/dumps/ \
       -v ${DB_DUMPS}:/var/opt/db/cron/ \
@@ -251,7 +247,7 @@ if [ "$DISTANT_DB" = "false" ]; then
       -e MYSQL_USER="$DB_USER" \
       -e MYSQL_PASSWORD="$DB_USER_PASSWD" \
       -e MYSQL_DATABASE="$DB_NAME" \
-      bizdock/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
+      bizdock/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $(whoami)
     echo "... start command completed"
 
     #wait 15 seconds to give time to DB to start correctly before bizdock
@@ -291,7 +287,7 @@ if [ $? -eq 0 ]; then
 fi
 
 echo ">> Starting the container ${INSTANCE_NAME}_bizdock ..."
-docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_network -p $BIZDOCK_PORT:$BIZDOCK_PORT_DEFAULT \
+docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_network -p $BIZDOCK_PORT:$BIZDOCK_PORT_DEFAULT \
   -v ${CONFIG_VOLUME}:/opt/start-config/ \
   -v ${MAF_FS}:/opt/artifacts/maf-file-system/ \
   -e CONFIGURE_DB_INIT=$CONFIGURE_DB \
@@ -304,8 +300,68 @@ docker run --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_net
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
-  bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami) $DOCKER_RUN_PARAMETERS
+  bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami)
 echo "... start command completed"
 
+echo ">>> Creating the administration scripts..."
+
+cat > $SCRIPT_DIR/remove.tmp <<- EOM
+IyEvYmluL3NoCgpIRUxQPSQnQXZhaWxhYmxlIG9wdGlvbnM6IFxuXHQtYSAtIEJpekRvY2sgaW5z
+dGFuY2UgbmFtZSAoZGVmYXVsdCBpcyBkZWZhdWx0KVxuXHQteCAtIGludGVyYWN0aXZlIG1vZGUg
+KGRlZmF1bHQgaXMgdHJ1ZSlcblx0LWggLSBoZWxwJyAKCklOU1RBTkNFX05BTUU9J2RlZmF1bHQn
+CklOVEVSQUNUSVZFX01PREU9dHJ1ZQpEQl9DT05UQUlORVJfREVURUNURUQ9ZmFsc2U7CgppZiBb
+ICQ/ICE9IDAgXSAjIFRoZXJlIHdhcyBhbiBlcnJvciBwYXJzaW5nIHRoZSBvcHRpb25zCnRoZW4K
+ICBlY2hvICJVbmtvd24gb3B0aW9uICQxIgogIGVjaG8gIiRIRUxQIgogIGV4aXQgMSAKZmkKCiMg
+UHJvY2VzcyB0aGUgYXJndW1lbnRzCndoaWxlIGdldG9wdHMgIjpQOnU6azphOnY6czp1OnA6cjpI
+OmM6bTpiOmRoeGkiIG9wdGlvbgpkbwogIGNhc2UgJG9wdGlvbiBpbgogICAgYSkKICAgICAgSU5T
+VEFOQ0VfTkFNRT0iJE9QVEFSRyIKICAgICAgOzsKICAgIGgpCiAgICAgIGVjaG8gIiRIRUxQIgog
+ICAgICBleGl0IDAKICAgICAgOzsKICAgIHgpCiAgICAgIElOVEVSQUNUSVZFX01PREU9IiRPUFRB
+UkciCiAgICAgIDs7CiAgICA6KQogICAgICBlY2hvICJPcHRpb24gLSRPUFRBUkcgbmVlZHMgYW4g
+YXJndW1lbnQiCiAgICAgIGV4aXQgMQogICAgICA7OwogICAgXD8pCiAgICAgIGVjaG8gIiRPUFRB
+UkcgOiBpbnZhbGlkIG9wdGlvbiIKICAgICAgZXhpdCAxCiAgICAgIDs7CiAgZXNhYwpkb25lCgpJ
+TlNUQU5DRV9URVNUPSQoZG9ja2VyIHBzIC1hIHwgZ3JlcCAtZSAiJHtJTlNUQU5DRV9OQU1FfV9i
+aXpkb2NrZGIkIikKaWYgWyAkPyAtZXEgMCBdOyB0aGVuCiAgREJfQ09OVEFJTkVSX0RFVEVDVEVE
+PXRydWUKZmkKCiNIZXJlIGlzIHRoZSBjb25maWd1cmF0aW9uIHRvIGJlIHVzZWQKZWNobyAiLS0t
+LSBXQVJOSU5HIC0tLS0iCmVjaG8gIlRoZSBCaXpEb2NrIGluc3RhbmNlICRJTlNUQU5DRV9OQU1F
+IHdpbGwgYmUgc3RvcHBlZCBhbmQgdGhlIGNvcnJlc3BvbmRpbmcgY29udGFpbmVycyBkZXN0cm95
+ZWQiCmVjaG8gIlRoZSBjb250YWluZXIgJHtJTlNUQU5DRV9OQU1FfV9iaXpkb2NrIHdpbGwgc3Rv
+cHBlZCBhbmQgZGVsZXRlZCIKaWYgWyAiJERCX0NPTlRBSU5FUl9ERVRFQ1RFRCIgPSAidHJ1ZSIg
+XTsgdGhlbgogIGVjaG8gIlRoZSBjb250YWluZXIgJHtJTlNUQU5DRV9OQU1FfV9iaXpkb2NrZGIg
+d2lsbCBzdG9wcGVkIGFuZCBkZWxldGVkIgpmaQoKaWYgWyAiJElOVEVSQUNUSVZFX01PREUiID0g
+InRydWUiIF07IHRoZW4KICByZWFkIC1wICJDb250aW51ZSAoeS9uKT8iIGNob2ljZQogIGNhc2Ug
+IiRjaG9pY2UiIGluIAogICAgeXxZICkgZWNobyAiT0sgbGF1bmNoaW5nIGluc3RhbGxhdGlvbi4u
+LiI7OwogICAgKiApIGV4aXQgMTs7CiAgZXNhYwpmaQoKZWNobyAiPj4+IFN0b3BwaW5nIHRoZSBC
+aXpEb2NrIGFwcGxpY2F0aW9uIGNvbnRhaW5lciAke0lOU1RBTkNFX05BTUV9X2JpemRvY2suLi4i
+CmRvY2tlciBzdG9wICR7SU5TVEFOQ0VfTkFNRX1fYml6ZG9jawplY2hvICIuLi4gYmxvY2tpbmcg
+dW50aWwgdGhlIGNvbnRhaW5lciBpcyBzdG9wcGVkLi4uIgpkb2NrZXIgd2FpdCAke0lOU1RBTkNF
+X05BTUV9X2JpemRvY2sKZWNobyAiLi4uICR7SU5TVEFOQ0VfTkFNRX1fYml6ZG9jayBpcyBzdG9w
+cGVkICEiCmVjaG8gIj4+PiBEZWxldGluZyB0aGUgYXBwbGljYXRpb24gY29udGFpbmVyICR7SU5T
+VEFOQ0VfTkFNRX1fYml6ZG9jay4uLiIKZG9ja2VyIHJtICR7SU5TVEFOQ0VfTkFNRX1fYml6ZG9j
+awplY2hvICIuLi4gJHtJTlNUQU5DRV9OQU1FfV9iaXpkb2NrIGlzIGRlbGV0ZWQgISIKCmlmIFsg
+IiREQl9DT05UQUlORVJfREVURUNURUQiID0gInRydWUiIF07IHRoZW4KICBlY2hvICI+Pj4gU3Rv
+cHBpbmcgdGhlIEJpekRvY2sgZGF0YWJhc2UgY29udGFpbmVyICR7SU5TVEFOQ0VfTkFNRX1fYml6
+ZG9ja2RiLi4uIgogIGRvY2tlciBzdG9wICR7SU5TVEFOQ0VfTkFNRX1fYml6ZG9ja2RiCiAgZWNo
+byAiLi4uIGJsb2NraW5nIHVudGlsIHRoZSBjb250YWluZXIgaXMgc3RvcHBlZC4uLiIKICBkb2Nr
+ZXIgd2FpdCAke0lOU1RBTkNFX05BTUV9X2JpemRvY2tkYgogIGVjaG8gIi4uLiAke0lOU1RBTkNF
+X05BTUV9X2JpemRvY2tkYiBpcyBzdG9wcGVkICEiCiAgZWNobyAiPj4+IERlbGV0aW5nIHRoZSBk
+YXRhYmFzZSBjb250YWluZXIgJHtJTlNUQU5DRV9OQU1FfV9iaXpkb2NrZGIuLi4iCiAgZG9ja2Vy
+IHJtICR7SU5TVEFOQ0VfTkFNRX1fYml6ZG9ja2RiCiAgZWNobyAiLi4uICR7SU5TVEFOQ0VfTkFN
+RX1fYml6ZG9ja2RiIGlzIGRlbGV0ZWQgISIKZmkKCgoKCgo=
+EOM
+
+cat $SCRIPT_DIR/remove.tmp | base64 -d > $SCRIPT_DIR/remove.sh
+rm $SCRIPT_DIR/remove.tmp
+chmod u+x $SCRIPT_DIR/remove.sh
 
 
+#Create the startup and stop scripts to be used later for starting and stopping bizdock
+#Startup script
+echo '#!/bin/sh' > $SCRIPT_DIR/start-$INSTANCE_NAME.sh
+echo -e "$SCRIPT_DIR/create.sh -a '$INSTANCE_NAME' -v '$DOCKER_VERSION' -P '$BIZDOCK_PORT' -b '$DB_DUMPS' -c '$CONFIG_VOLUME' -m '$MAF_FS' -w '$BIZDOCK_BIN_PARAMETERS' -z '$DOCKER_RUN_PARAMETERS'" >> $SCRIPT_DIR/start-$INSTANCE_NAME.sh
+chmod u+x $SCRIPT_DIR/start-$INSTANCE_NAME.sh
+#Stopping script
+echo '#!/bin/sh' > $SCRIPT_DIR/stop-$INSTANCE_NAME.sh
+echo -e "$SCRIPT_DIR/remove.sh -a $INSTANCE_NAME" >> $SCRIPT_DIR/stop-$INSTANCE_NAME.sh
+chmod u+x $SCRIPT_DIR/stop-$INSTANCE_NAME.sh
+
+echo "... scripts created"
