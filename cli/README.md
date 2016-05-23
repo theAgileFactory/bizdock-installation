@@ -106,6 +106,16 @@ Once your instance is created, you can control it using the two administration s
 
 These two scripts holds all the parameters you defined when creating your instance.
 
+### Remark about the "stop" script
+
+This script will stop and then delete the application and database containers (if this one exists).
+
+IMPORTANT: the **volumes** and **network** are **NOT removed**.
+You need to clean them manually.
+Here are the name patterns for these objects:
+* ```<<instance name>>_bizdock_database``` for the BizDock database volume (which is persisting the database data)
+* ```<<instance name>>_bizbock_network``` for the BizDock bridge network which is dedicated to one instance
+
 
 ## Upgrade a BizDock instance
 
@@ -128,18 +138,6 @@ Backing up a BizDock instance consists in:
    * The database dump folder (see option ```-b``` of the ```create.sh``` script)
    * The configuration folder (see option ```-c``` of the ```create.sh``` script)
    * The BizDock file system folder (see option ```-m``` of the ```create.sh``` script)
-
-
-## Stop a BizDock instance
-
-To stop a BizDock instance, you need to use the ```stop.sh``` script.
-This one will stop and then delete the application and database containers (if this one exists).
-
-IMPORTANT: the **volumes** and **network** are **NOT removed**.
-You need to clean them manually.
-Here are the name patterns for these objects:
-* ```<<instance name>>_bizdock_database``` for the BizDock database volume (which is persisting the database data)
-* ```<<instance name>>_bizbock_network``` for the BizDock bridge network which is dedicated to one instance
 
 ## Database
 
