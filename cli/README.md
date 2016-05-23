@@ -6,10 +6,10 @@ This script is to be used to create a BizDock application instance which consist
 
 * [Pre-requisites](#pre-requisites)
 * [BizDock containers](#bizdock-containers)
-* [Run a BizDock instance](#run-a-bizdock-instance)
+* [Create a BizDock instance](#create-a-new-bizdock-instance)
+* [Start and stop a previously created BizDock instance](#start-and-stop-a-previously-created-bizdock-instance)
 * [Upgrade a BizDock instance](#upgrade-a-bizdock-instance)
 * [Backup a BizDock instance](#backup-a-bizdock-instance)
-* [Stop a BizDock instance](#stop-a-bizdock-instance)
 * [Database](#database)
 * [Configuration files](#configuration-files)
 * [Logs](#logs)
