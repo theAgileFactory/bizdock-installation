@@ -43,7 +43,7 @@ Use the ```-h``` flag to display the help.
 By default this script will run two containers on the same host : one for the database and one for the application.
 It is however possible to  use a database installed on a different host (please see the option ```-H``` of the ```create.sh``` script).
 
-> WARNING : please see the specific note for Windows below
+> WARNING : please see the specific [note for Windows](##note-for-windows-installation)
 
 If the application container already exists, it will be stopped and the deleted.
 
@@ -61,9 +61,21 @@ The ```create.sh``` script creates two other scripts (the administration scripts
 
 ### Note for Windows installation
 
+For creating a BizDock instance on Windows you must install the Docker Toolbox.
+In this configuration, Docker is (yet) natively running on the OS but rather within a VirtualBox virtual machine.
+This machine is allocated an IP address which may change.
 
+To get the IP address of the machine you must open a Docker Quickstart Terminal and enter:
+```docker-machine default ip```
 
-### Default
+You must then provide a value for the ```-j``` parameter of the ```create.sh``` script.
+This parameter is the public URL for the Bizdock instance.
+If the ip is ```192.168.99.100``` then the command line for creating an instance must be:
+```./create.sh -j "http://192.168.99.100:8080"```
+
+> NB: 8080 is the default port for BizDock. If you selected an alternative port using the flag ```-P``` you must change the public URL accordingly.
+
+### Default options
 
 Running the ```create.sh``` without any option will:
 * create a container ```default_bizdock``` (for the BizDock application container), this one will listen on the port ```8080```
@@ -99,6 +111,7 @@ You can give different arguments to the ```create.sh``` script :
 * ```-c``` : define a mount point (on your host) where to store configuration files
 * ```-m``` : define a mount point (on your host) where the BizDock file system is stored
 * ```-i``` : reset and initialize the database (warning: this will erase the database)
+* ```-j``` : the BizDock public URL (default is http://localhost:<<BizDock port>>)
 * ```-w``` : BizDock binary additional parameters (to provide parameters to the play framework application)
 * ```-z``` : additional parameters for the ```docker run``` command used to start the two containers
 * ```-x``` : interactive mode (default is true) - will request the validation of the user before running the installation
