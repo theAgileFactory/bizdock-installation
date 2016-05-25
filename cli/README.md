@@ -62,10 +62,10 @@ The ```create.sh``` script creates two other scripts (the administration scripts
 ### Note for Windows installation
 
 For creating a BizDock instance on Windows you must install the Docker Toolbox.
-In this configuration, Docker is (yet) natively running on the OS but rather within a VirtualBox virtual machine.
-This machine is allocated an IP address which may change.
+In this configuration, Docker is not (yet) natively running on the OS but rather within a VirtualBox virtual machine.
+This machine is allocated with an IP address which may change.
 
-To get the IP address of the machine you must open a Docker Quickstart Terminal and enter:
+To get the IP address of the virtual machine you must open a Docker Quickstart Terminal and enter:
 ```docker-machine default ip```
 
 You must then provide a value for the ```-j``` parameter of the ```create.sh``` script.
