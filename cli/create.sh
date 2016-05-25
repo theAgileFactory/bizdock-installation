@@ -149,6 +149,12 @@ if [ -z "$DB_NAME" ]; then
 fi
 if [ -z "$DB_USER" ]; then
   DB_USER=$DB_USER_DEFAULT
+else
+  if ! [[ "$DB_USER" =~ "[a-z_][a-z0-9_]{0,30}" ]]; then
+    #If the user is not a valid user name, use the default
+    echo ">> The user name $DB_USER is not valid, using the default one instead : $DB_USER_DEFAULT"
+    DB_USER=$DB_USER_DEFAULT
+  fi
 fi
 if [ -z "$DB_USER_PASSWD" ]; then
   DB_USER_PASSWD=$DB_USER_PASSWD_DEFAULT
