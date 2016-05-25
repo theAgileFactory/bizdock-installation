@@ -111,7 +111,7 @@ You can give different arguments to the ```create.sh``` script :
 * ```-c``` : define a mount point (on your host) where to store configuration files
 * ```-m``` : define a mount point (on your host) where the BizDock file system is stored
 * ```-i``` : reset and initialize the database (warning: this will erase the database)
-* ```-j``` : the BizDock public URL (default is http://localhost:<<BizDock port>>)
+* ```-j``` : the BizDock public URL (default is http://localhost:BizDock_port where "BizDock_port" is the BizDock TCP port)
 * ```-w``` : BizDock binary additional parameters (to provide parameters to the play framework application)
 * ```-z``` : additional parameters for the ```docker run``` command used to start the two containers
 * ```-x``` : interactive mode (default is true) - will request the validation of the user before running the installation
