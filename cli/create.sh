@@ -363,5 +363,6 @@ chmod u+x $SCRIPT_DIR/start-$INSTANCE_NAME.sh
 echo '#!/bin/sh' > $SCRIPT_DIR/stop-$INSTANCE_NAME.sh
 echo -e "$SCRIPT_DIR/remove.sh -a $INSTANCE_NAME" >> $SCRIPT_DIR/stop-$INSTANCE_NAME.sh
 chmod u+x $SCRIPT_DIR/stop-$INSTANCE_NAME.sh
-
 echo "... scripts created"
+
+echo -e "\n**** BizDock is starting, please wait 30 seconds before calling $BIZDOCK_PUBLIC_URL BizDock may need a bit of time to start ****"
