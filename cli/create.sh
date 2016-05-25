@@ -3,6 +3,8 @@
 HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-j - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-w - BizDock binary additional parameters\n\t-z - docker run additional parameters\n\t-x - interactive mode (default is true)\n\t-h - help' 
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BIZDOCK_USERNAME=$(whoami)
+BIZDOCK_USERNAME_DEFAULT='maf'
 INSTANCE_NAME='default'
 DOCKER_VERSION='latest'
 DB_NAME_DEFAULT='maf'
@@ -144,17 +146,17 @@ done
 
 #Set defaults if needed
 echo -e "\n\n---- COMPUTING CONFIGURATION ----\n"
+if ! [[ "$BIZDOCK_USERNAME" =~ "[a-z_][a-z0-9_]{0,30}" ]]; then
+  #If the user is not a valid user name, use the default
+  echo ">> The user name $BIZDOCK_USERNAME is not valid, using the default one instead : $BIZDOCK_USERNAME_DEFAULT"
+  BIZDOCK_USERNAME=$BIZDOCK_USERNAME_DEFAULT
+fi
+
 if [ -z "$DB_NAME" ]; then
   DB_NAME=$DB_NAME_DEFAULT
 fi
 if [ -z "$DB_USER" ]; then
   DB_USER=$DB_USER_DEFAULT
-else
-  if ! [[ "$DB_USER" =~ "[a-z_][a-z0-9_]{0,30}" ]]; then
-    #If the user is not a valid user name, use the default
-    echo ">> The user name $DB_USER is not valid, using the default one instead : $DB_USER_DEFAULT"
-    DB_USER=$DB_USER_DEFAULT
-  fi
 fi
 if [ -z "$DB_USER_PASSWD" ]; then
   DB_USER_PASSWD=$DB_USER_PASSWD_DEFAULT
@@ -253,7 +255,7 @@ if [ "$DISTANT_DB" = "false" ]; then
       -e MYSQL_USER="$DB_USER" \
       -e MYSQL_PASSWORD="$DB_USER_PASSWD" \
       -e MYSQL_DATABASE="$DB_NAME" \
-      bizdock/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $(whoami)
+      bizdock/bizdock_mariadb:10.1.12 --useruid $(id -u $BIZDOCK_USERNAME) --username $BIZDOCK_USERNAME
     echo "... start command completed"
 
     #wait 15 seconds to give time to DB to start correctly before bizdock
@@ -306,7 +308,7 @@ docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INS
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
-  bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $(whoami)
+  bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $BIZDOCK_USERNAME) --username $BIZDOCK_USERNAME
 echo "... start command completed"
 
 echo ">>> Creating the administration scripts..."
