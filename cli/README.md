@@ -16,12 +16,13 @@ This script is to be used to create a BizDock application instance which consist
 
 ## Pre-requisites
 
-BizDock requires a Docker engine version > 1.10 on a Linux host.
-
-> Other systems have not been tested yet but may also work.
+BizDock requires a Docker engine version > 1.10 on a Linux, MacOS or Windows host.
+For Windows or MacOS you must install the [Docker Toolbox](https://www.docker.com/products/docker-toolbox) for these operating systems. 
+Please note that Linux is the only OS recommended for a production deployment.
 
 > The installation script ```create.sh``` has been tested on CentOS 7 but should run on any bash compatible Linux distribution
 
+> For Windows, please use the "Docker Quickstart Terminal" (which is part of the Docker Toolbox distribution) to run the ```create.sh``` script.
 
 ## BizDock containers
 
@@ -42,6 +43,8 @@ Use the ```-h``` flag to display the help.
 By default this script will run two containers on the same host : one for the database and one for the application.
 It is however possible to  use a database installed on a different host (please see the option ```-H``` of the ```create.sh``` script).
 
+> WARNING : please see the specific note for Windows below
+
 If the application container already exists, it will be stopped and the deleted.
 
 If the database container already exists:
@@ -55,6 +58,10 @@ The ```create.sh``` script creates two other scripts (the administration scripts
 *Please note* : 
 * the ```create.sh``` script should be used only to create a new BizDock instance.
 * the ```create.sh``` also creates a ```remove.sh``` script, both must not be deleted or moved to another folder
+
+### Note for Windows installation
+
+
 
 ### Default
 
