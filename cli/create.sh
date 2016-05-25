@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-u - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-w - BizDock binary additional parameters\n\t-z - docker run additional parameters\n\t-x - interactive mode (default is true)\n\t-h - help' 
+HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-j - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-w - BizDock binary additional parameters\n\t-z - docker run additional parameters\n\t-x - interactive mode (default is true)\n\t-h - help' 
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 INSTANCE_NAME='default'
@@ -34,7 +34,7 @@ then
 fi
 
 # Process the arguments
-while getopts ":P:u:k:a:v:s:u:p:r:H:c:m:b:x:w:z:dhi" option
+while getopts ":P:u:k:a:v:s:j:p:r:H:c:m:b:x:w:z:dhi" option
 do
   case $option in
     a)
@@ -112,7 +112,7 @@ do
         exit 1
       fi
       ;;
-    u)
+    j)
       BIZDOCK_PUBLIC_URL="$OPTARG"
       ;;
     h)
