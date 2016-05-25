@@ -255,7 +255,7 @@ if [ "$DISTANT_DB" = "false" ]; then
       -e MYSQL_USER="$DB_USER" \
       -e MYSQL_PASSWORD="$DB_USER_PASSWD" \
       -e MYSQL_DATABASE="$DB_NAME" \
-      bizdock/bizdock_mariadb:10.1.12 --useruid $(id -u $BIZDOCK_USERNAME) --username $BIZDOCK_USERNAME
+      bizdock/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $BIZDOCK_USERNAME
     echo "... start command completed"
 
     #wait 15 seconds to give time to DB to start correctly before bizdock
@@ -308,7 +308,7 @@ docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INS
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
-  bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $BIZDOCK_USERNAME) --username $BIZDOCK_USERNAME
+  bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $BIZDOCK_USERNAME
 echo "... start command completed"
 
 echo ">>> Creating the administration scripts..."

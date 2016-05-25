@@ -62,9 +62,9 @@ if [[ ! -z "$userUid" ]] && [[ ! -z "$userName" ]]  ; then
     mv tmp.cfg /opt/maf/maf-desktop/conf/environment.conf
 
     #Changing the framework.conf configuration
-    sed "s/maf\.public\.url=.*/maf\.public\.url=\"http:\/\/localhost:$BIZDOCK_PORT\"/g" /opt/maf/maf-desktop/conf/framework.conf > tmp.cfg
+    sed "s,maf\.public\.url=.*,maf\.public\.url=\"$BIZDOCK_PUBLIC_URL\",g" /opt/maf/maf-desktop/conf/framework.conf > tmp.cfg
     mv tmp.cfg /opt/maf/maf-desktop/conf/framework.conf
-    sed "s/swagger\.api\.basepath=.*/swagger\.api\.basepath=\"http:\/\/localhost:$BIZDOCK_PORT\"/g" /opt/maf/maf-desktop/conf/framework.conf > tmp.cfg
+    sed "s,swagger\.api\.basepath=.*,swagger\.api\.basepath=\"$BIZDOCK_PUBLIC_URL\",g" /opt/maf/maf-desktop/conf/framework.conf > tmp.cfg
     mv tmp.cfg /opt/maf/maf-desktop/conf/framework.conf
 
     #Changing the dbmdl-framework configuration
