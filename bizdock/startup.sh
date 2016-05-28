@@ -8,6 +8,11 @@ HELP="Possible arguments :
 --useruid (-g)   : the uid required for accessing the host files
 --username (-u)  : the name of the user required for accessing the host files"
 
+#Test if the CLI version is compatible
+if [ "$CLI_VERSION" != "1.0" ] then
+	echo -e "The CLI version used to create the container is outdated, please download the new one and run the installation again"
+fi
+
 echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
 echo "MYSQL_HOSTNAME=$MYSQL_HOSTNAME"
 echo "MYSQL_PORT=$MYSQL_PORT"
@@ -95,7 +100,7 @@ if [[ ! -z "$userUid" ]] && [[ ! -z "$userName" ]]  ; then
   fi  
 
   echo "---- REFRESHING THE DATABASE ----"
-  if [ "$CONFIGURE_DB_INIT" = true ]; then
+  if [ "$CONFIGURE_DB_INIT" = "true" ]; then
     echo ">> Reseting the database schema"
 mysql -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u root --password=${MYSQL_ROOT_PASSWORD} <<EOF
 DROP SCHEMA IF EXISTS ${MYSQL_DATABASE};
@@ -120,7 +125,7 @@ EOF
     exit 1
   fi
 
-  if [ "$CONFIGURE_DB_INIT" = true ]; then
+  if [ "$CONFIGURE_DB_INIT" = "true" ]; then
     echo ">> Inserting the default data"
     mysql -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /opt/maf/maf-desktop/server/maf-desktop-app-dist/conf/sql/init_base.sql
   fi

@@ -2,6 +2,7 @@
 
 HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-j - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-w - BizDock binary additional parameters\n\t-z - docker run additional parameters\n\t-x - interactive mode (default is true)\n\t-h - help' 
 
+CLI_VERSION="1.0"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BIZDOCK_USERNAME=$(whoami)
 BIZDOCK_USERNAME_DEFAULT='maf'
@@ -251,7 +252,6 @@ if [ "$DISTANT_DB" = "false" ]; then
       -v ${DB_DUMPS}:/var/opt/db/dumps/ \
       -v ${DB_DUMPS}:/var/opt/db/cron/ \
       -e MYSQL_ROOT_PASSWORD="$DB_ROOT_PASSWD" \
-      -e MYSQL_DATABASE="$DB_NAME" \
       -e MYSQL_USER="$DB_USER" \
       -e MYSQL_PASSWORD="$DB_USER_PASSWD" \
       -e MYSQL_DATABASE="$DB_NAME" \
@@ -308,6 +308,7 @@ docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INS
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
+  -e CLI_VERSION=$CLI_VERSION \
   bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $BIZDOCK_USERNAME
 echo "... start command completed"
 
