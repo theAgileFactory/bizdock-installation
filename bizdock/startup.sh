@@ -9,8 +9,9 @@ HELP="Possible arguments :
 --username (-u)  : the name of the user required for accessing the host files"
 
 #Test if the CLI version is compatible
-if [ "$CLI_VERSION" != "1.0" ] then
+if [ "$CLI_VERSION" != "1.0" ]; then
 	echo -e "The CLI version used to create the container is outdated, please download the new one and run the installation again"
+    exit 1
 fi
 
 echo "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
@@ -46,10 +47,19 @@ done
 
 #Create a user with the right UID to allow access to the files from the host
 if [[ ! -z "$userUid" ]] && [[ ! -z "$userName" ]]  ; then
-  user=$(id -u $userName > /dev/null 2>&1; echo $?)
+  user=$(id -u $userUid > /dev/null 2>&1; echo $?)
   if [ $user -eq 1 ]; then
+  	#The user id does not exits, check if the name is available
+    user=$(id -u $userName > /dev/null 2>&1; echo $?)
+    if [ $user -eq 0 ]; then
+    	userName='maf'
+    fi
     useradd -u $userUid $userName
+  else
+  	#The user id already exists, reuse it
+    userName=$(id -run $userUid)
   fi
+
 
   /opt/scripts/update_bashrc.sh
 

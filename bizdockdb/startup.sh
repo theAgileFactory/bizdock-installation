@@ -31,7 +31,18 @@ done
 
 #Create a user with the right UID to allow access to the files from the host
 if [[ ! -z "$userUid" ]] && [[ ! -z "$userName" ]]  ; then
-	useradd -u $userUid $userName
+  user=$(id -u $userUid > /dev/null 2>&1; echo $?)
+  if [ $user -eq 1 ]; then
+  	#The user id does not exits, check if the name is available
+    user=$(id -u $userName > /dev/null 2>&1; echo $?)
+    if [ $user -eq 0 ]; then
+    	userName='maf'
+    fi
+    useradd -u $userUid $userName
+  else
+  	#The user id already exists, reuse it
+    userName=$(id -run $userUid)
+  fi
 
   #create script for mysqldump
   if [ ! -e /var/opt/db/cron/mysqldump_db.sh ]; then
