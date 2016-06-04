@@ -12,6 +12,9 @@ RUN yum update -y && yum install -y --setopt=tsflags=nodocs epel-release && yum 
 #Install required and useful packages
 RUN yum install -y --setopt=tsflags=nodocs bc which unzip tar mariadb telnet wget curl bzip2 xz java-1.8.0-openjdk && yum clean all
 
+#mysql configuration
+RUN echo -e "[client]\ndefault-character-set=utf8\n" >> /etc/my.cnf
+
 RUN mkdir -p /opt/maf/maf-desktop/server
 RUN mkdir -p /tmp/deadletters/ && mkdir -p /tmp/deadletters-reprocessing
 
