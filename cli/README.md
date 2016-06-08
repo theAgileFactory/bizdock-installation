@@ -54,6 +54,7 @@ If the database container already exists:
 The ```create.sh``` script creates two other scripts (the administration scripts):
 * a ```start-<<instance name>>.sh``` script : to be used to start the BizDock instance
 * a ```stop-<<instance name>>.sh``` script : to be used to stop the BizDock instance
+* a ```stop-application-<<instance name>>.sh``` script : to be used to stop the only the application container (the database container remain active)
 
 *Please note* : 
 * the ```create.sh``` script should be used only to create a new BizDock instance.
@@ -123,6 +124,7 @@ You can give different arguments to the ```create.sh``` script :
 Once your instance is created, you can control it using the two administration scripts generated during the installation:
 * a ```start-<<instance name>>.sh``` script : to be used to start the BizDock instance
 * a ```stop-<<instance name>>.sh``` script : to be used to stop the BizDock instance
+* a ```stop-application-<<instance name>>.sh``` script : to be used to stop the only the application container (the database container remain active)
 
 These two scripts holds all the parameters you defined when creating your instance.
 
@@ -147,8 +149,6 @@ You can then stop/start BizDock and the upgrade will be automatic.
 > NB: by default the version is set to 'latest' which will always upgrade to the last recommended BizDock version
 
 WARNING: do not execute ```run.sh``` with an older version (see parameter ```-v```) of BizDock than the one currently installed. This would break the installation and may corrupt your data.
-
-
 
 ## Backup a BizDock instance
 
