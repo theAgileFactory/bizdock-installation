@@ -2,6 +2,9 @@ FROM centos:7
 
 MAINTAINER Marc Schaer
 
+#Port
+EXPOSE 8080
+
 #Create volumes
 VOLUME /opt/start-config/
 VOLUME /opt/artifacts/maf-file-system/

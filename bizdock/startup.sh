@@ -169,6 +169,18 @@ EOF
   if [ ! -d /opt/artifacts/maf-file-system/$EXTENSIONS_FOLDER ]; then
     mkdir -p /opt/artifacts/maf-file-system/$EXTENSIONS_FOLDER
   fi
+  
+  N=$(cat /opt/start-config/maf-desktop/framework.conf | grep maf.actor.deadletters.folder | cut -d '=' -f 2 | cut -d '"' -f 2 | grep -o "/" | wc -l)
+  DEADLETTERS_FOLDER=$(cat /opt/start-config/maf-desktop/framework.conf | grep maf.actor.deadletters.folder | cut -d '=' -f 2 | cut -d '"' -f 2 | cut -d '/' -f $N)
+  if [ ! -d /opt/artifacts/maf-file-system/$DEADLETTERS_FOLDER ]; then
+    mkdir -p /opt/artifacts/maf-file-system/$DEADLETTERS_FOLDER
+  fi
+  
+  N=$(cat /opt/start-config/maf-desktop/framework.conf | grep maf.actor.deadletters.reprocessing.folder | cut -d '=' -f 2 | cut -d '"' -f 2 | grep -o "/" | wc -l)
+  DEADLETTERS_REPROCESSING_FOLDER=$(cat /opt/start-config/maf-desktop/framework.conf | grep maf.actor.deadletters.reprocessing.folder | cut -d '=' -f 2 | cut -d '"' -f 2 | cut -d '/' -f $N)
+  if [ ! -d /opt/artifacts/maf-file-system/$DEADLETTERS_REPROCESSING_FOLDER ]; then
+    mkdir -p /opt/artifacts/maf-file-system/$DEADLETTERS_REPROCESSING_FOLDER
+  fi
 
   if [ ! -d /opt/artifacts/maf-file-system/outputs ]; then
     mkdir -p /opt/artifacts/maf-file-system/outputs
@@ -185,7 +197,7 @@ EOF
   ls /opt/artifacts/maf-file-system/$EXTENSIONS_FOLDER
 
   echo "---- LAUNCHING BIZDOCK APPLICATION ----"
-  /opt/maf/maf-desktop/server/maf-desktop-app-dist/bin/maf-desktop-app -Dcom.agifac.appid=maf-desktop-docker -Dconfig.file=/opt/maf/maf-desktop/conf/application.conf -Dlogger.file=/opt/maf/maf-desktop/conf/application-logger.xml -Dhttp.port=$BIZDOCK_PORT -DapplyEvolutions.default=false
+  /opt/maf/maf-desktop/server/maf-desktop-app-dist/bin/maf-desktop-app -Dcom.agifac.appid=maf-desktop-docker -Dconfig.file=/opt/maf/maf-desktop/conf/application.conf -Dlogger.file=/opt/maf/maf-desktop/conf/application-logger.xml -Dhttp.port=8080 -DapplyEvolutions.default=false
 else
   echo "You should use a valid user"
 fi

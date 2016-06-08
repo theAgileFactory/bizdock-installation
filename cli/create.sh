@@ -295,7 +295,7 @@ if [ $? -eq 0 ]; then
 fi
 
 echo ">> Starting the container ${INSTANCE_NAME}_bizdock ..."
-docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_network -p $BIZDOCK_PORT:$BIZDOCK_PORT_DEFAULT \
+docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INSTANCE_NAME}_bizdock_network -p $BIZDOCK_PORT:8080 \
   -v ${CONFIG_VOLUME}:/opt/start-config/ \
   -v ${MAF_FS}:/opt/artifacts/maf-file-system/ \
   -e CONFIGURE_DB_INIT=$CONFIGURE_DB \
