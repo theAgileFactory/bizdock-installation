@@ -20,6 +20,7 @@ echo "MYSQL_PORT=$MYSQL_PORT"
 echo "MYSQL_DATABASE=$MYSQL_DATABASE"
 echo "MYSQL_USER=$MYSQL_USER"
 echo "MYSQL_PASSWORD=$MYSQL_PASSWORD"
+echo "TEST_DATA=$TEST_DATA"
 
 while [[ $# > 0 ]]
 do
@@ -110,7 +111,7 @@ if [[ ! -z "$userUid" ]] && [[ ! -z "$userName" ]]  ; then
   fi  
 
   echo "---- REFRESHING THE DATABASE ----"
-  if [ "$CONFIGURE_DB_INIT" = "true" ]; then
+  if [ "$CONFIGURE_DB_INIT" = "true" ] || [ "$TEST_DATA" = "true" ]; then
     echo ">> Reseting the database schema"
 mysql -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u root --password=${MYSQL_ROOT_PASSWORD} <<EOF
 DROP DATABASE IF EXISTS ${MYSQL_DATABASE};
@@ -134,9 +135,20 @@ EOF
     exit 1
   fi
 
-  if [ "$CONFIGURE_DB_INIT" = "true" ]; then
+  if [ "$CONFIGURE_DB_INIT" = "true" ] || [ "$TEST_DATA" = "true" ]; then
     echo ">> Inserting the default data"
-    mysql -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /opt/maf/maf-desktop/server/maf-desktop-app-dist/conf/sql/init_base.sql
+    mysql --verbose -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /opt/maf/maf-desktop/server/maf-desktop-app-dist/conf/sql/init_base.sql
+  fi
+
+  if [ "$TEST_DATA" = "true" ]; then
+    echo ">> Inserting the test data"
+    wget https://raw.githubusercontent.com/theAgileFactory/maf-desktop-app/master/development/tools/sample-data/init_data.sql
+    if [ $STATUS -eq 0 ]; then
+	echo ">> Test data found, loading now"
+    	mysql --verbose -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < init_data.sql
+    else
+        echo "WARNING : no test data found, please contact the GitHub project owner"
+    fi
   fi
 
   echo "---- CREATING THE MAF-FILE-SYSTEM ----"

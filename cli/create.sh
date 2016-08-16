@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-j - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-w - BizDock binary additional parameters\n\t-z - docker run additional parameters\n\t-x - interactive mode (default is true)\n\t-h - help' 
+HELP=$'Available options: \n\t-a - BizDock instance name (default is default)\n\t-v - BizDock version (default is latest)\n\t-P - main Bizdock port (default is 8080)\n\t-d - start a database docker container (default if no -H is provided)\n\t-H - database host and port in case the db is not set up as a docker container (ex. HOST:PORT)\n\t-s - database schema (default is maf)\n\t-u - database user (default is maf)\n\t-p - user database password (default is maf)\n\t-r - root database password (default is root)\n\t-j - public URL (default is localhost:<BIZDOCK_PORT>)\n\t-b - mount point of db backup (MANDATORY)\n\t-c - mount point for configuration files (MANDATORY)\n\t-m - mount point of the BizDock file-system volume on the host (MANDATORY)\n\t-i - reset and initialize database with default data (default is false)\n\t-w - BizDock binary additional parameters\n\t-z - docker run additional parameters\n\t-x - interactive mode (default is true)\n\t-t - test data (default is false)\n\t-h - help' 
 
 CLI_VERSION="1.0"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -26,6 +26,7 @@ BIZDOCK_PUBLIC_URL=""
 DISTANT_DB=false
 CONFIGURE_DB=false
 INTERACTIVE_MODE=true
+TEST_DATA=false
 DOCKER_RUN_PARAMETERS=""
 BIZDOCK_BIN_PARAMETERS=""
 
@@ -37,7 +38,7 @@ then
 fi
 
 # Process the arguments
-while getopts ":P:u:k:a:v:s:j:p:r:H:c:m:b:x:w:z:dhi" option
+while getopts ":P:u:k:a:v:s:j:p:r:H:c:m:b:x:w:z:t:dhi" option
 do
   case $option in
     a)
@@ -131,6 +132,9 @@ do
     x)
       INTERACTIVE_MODE="$OPTARG"
       ;;
+    t)
+      TEST_DATA="$OPTARG"
+      ;;
     i)
       CONFIGURE_DB=true
       ;;
@@ -194,20 +198,21 @@ fi
 
 #Here is the configuration to be used
 echo -e "\n\n---- PROPOSED CONFIGURATION ----\n"
-echo "Name of the BizDock instance         = $INSTANCE_NAME"
-echo "Version of BizDock application image = $DOCKER_VERSION"
-echo "Name of the database schema          = $DB_NAME"
-echo "Name of the database user            = $DB_USER"
-echo "Host mount for BizDock configuration = $CONFIG_VOLUME"
-echo "Host mount for database dumps        = $DB_DUMPS"
-echo "Host mount for BizDock file system   = $MAF_FS"
-echo "Port on which BizDock will listen    = $BIZDOCK_PORT"
-echo "True if a distant database is used   = $DISTANT_DB"
-echo "Host of the distant database         = $DB_HOST"
-echo "Reset the database ?                 = $CONFIGURE_DB"
-echo "BizDock public URL                   = $BIZDOCK_PUBLIC_URL"
-echo "BizDock binary special parameters    = $BIZDOCK_BIN_PARAMETERS"
-echo "Docker run commands parameters       = $DOCKER_RUN_PARAMETERS"
+echo "Name of the BizDock instance          = $INSTANCE_NAME"
+echo "Version of BizDock application image  = $DOCKER_VERSION"
+echo "Name of the database schema           = $DB_NAME"
+echo "Name of the database user             = $DB_USER"
+echo "Host mount for BizDock configuration  = $CONFIG_VOLUME"
+echo "Host mount for database dumps         = $DB_DUMPS"
+echo "Host mount for BizDock file system    = $MAF_FS"
+echo "Port on which BizDock will listen     = $BIZDOCK_PORT"
+echo "True if a distant database is used    = $DISTANT_DB"
+echo "Host of the distant database          = $DB_HOST"
+echo "Reset the database ?                  = $CONFIGURE_DB"
+echo "BizDock public URL                    = $BIZDOCK_PUBLIC_URL"
+echo "BizDock binary special parameters     = $BIZDOCK_BIN_PARAMETERS"
+echo "Docker run commands parameters        = $DOCKER_RUN_PARAMETERS"
+echo "Reset the database and load test data = $TEST_DATA"
 
 if [ "$INTERACTIVE_MODE" = "true" ]; then
   read -p "Continue (y/n)?" choice
@@ -305,6 +310,7 @@ docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INS
   -e MYSQL_DATABASE=$DB_NAME \
   -e MYSQL_USER=$DB_USER \
   -e MYSQL_PASSWORD=$DB_USER_PASSWD \
+  -e TEST_DATA="$TEST_DATA" \
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
