@@ -33,6 +33,11 @@
 	
 	<repositories>
 		<repository>
+            <id>sonatype-releases</id>
+            <name>sonatype-releases</name>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+		<repository>
 			<id>typesafe</id>
 			<name>typesafe-releases</name>
 			<url>http://repo.typesafe.com/typesafe/releases/</url>
@@ -41,7 +46,7 @@
             <id>sonatype-snapshots</id>
             <name>sonatype-snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository> 
+        </repository>
 	</repositories>
 
 	<properties>
