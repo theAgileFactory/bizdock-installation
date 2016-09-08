@@ -385,7 +385,7 @@ chmod u+x $SCRIPT_DIR/remove.sh
 #Create the startup and stop scripts to be used later for starting and stopping bizdock
 #Startup script
 echo '#!/bin/sh' > $SCRIPT_DIR/start-$INSTANCE_NAME.sh
-echo -e "$SCRIPT_DIR/create.sh -a '$INSTANCE_NAME' -v '$DOCKER_VERSION' -P '$BIZDOCK_PORT' -b '$DB_DUMPS' -c '$CONFIG_VOLUME' -m '$MAF_FS' -w '$BIZDOCK_BIN_PARAMETERS' -z '$DOCKER_RUN_PARAMETERS'" >> $SCRIPT_DIR/start-$INSTANCE_NAME.sh
+echo -e "$SCRIPT_DIR/create.sh -a '$INSTANCE_NAME' -v '$DOCKER_VERSION' -P '$BIZDOCK_PORT' -b '$DB_DUMPS' -c '$CONFIG_VOLUME' -m '$MAF_FS' -w '$BIZDOCK_BIN_PARAMETERS' -z '$DOCKER_RUN_PARAMETERS' $@" >> $SCRIPT_DIR/start-$INSTANCE_NAME.sh
 chmod u+x $SCRIPT_DIR/start-$INSTANCE_NAME.sh
 #Stopping script
 echo '#!/bin/sh' > $SCRIPT_DIR/stop-$INSTANCE_NAME.sh
