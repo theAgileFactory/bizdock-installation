@@ -275,11 +275,6 @@ if [ "$DISTANT_DB" = "false" ]; then
   else
     echo -e ">> A database container is already running, it will be reused.\n If are not willing this, please stop it using the docker command line :'docker stop ${INSTANCE_NAME}_bizdockdb'"
   fi
-
-  IS_TABLE=$(docker exec -it ${INSTANCE_NAME}_bizdockdb mysql -h localhost -P 3306 -u "$DB_USER" -p"$DB_USER_PASSWD" -D "$DB_NAME" -e 'show tables;')
-  if [ -z "$IS_TABLE" ]; then
-    CONFIGURE_DB=true
-  fi
 fi
 
 #Running Bizdock application container
