@@ -263,9 +263,9 @@ if [ "$DISTANT_DB" = "false" ]; then
       bizdock/bizdock_mariadb:10.1.12 --useruid $(id -u $(whoami)) --username $BIZDOCK_USERNAME
     echo "... start command completed"
 
-    #wait 15 seconds to give time to DB to start correctly before bizdock
-    echo ">> Wait 15 seconds to ensure that the database container is started"
-    sleep 15
+    #wait 1 minute to give time to DB to start correctly before bizdock
+    echo ">> Wait 1 minute to ensure that the database container is started"
+    sleep 60
 
     #test if db container is up
     if [ -z "$(docker ps | grep ${INSTANCE_NAME}_bizdockdb$)" ]; then
