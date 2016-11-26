@@ -61,6 +61,8 @@ cd ../..
 
 echo ">> STEP-2 : Building the image according to the right version"
 echo ">>>> SETP-2.1 : Copying the merged packages to the workdir"
+rm bizdock/*.jar
+rm bizdock/*.zip
 cp target/dependency/merged-*.zip bizdock/
 cp target/dependency/maf-defaultplugins-extension-*.jar bizdock/
 
