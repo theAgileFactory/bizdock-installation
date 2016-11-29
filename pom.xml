@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>com.agifac.maf.packaging</groupId>
 			<artifactId>maf-desktop</artifactId>
-			<version>14.0.0</version>
+			<version>14.0.1</version>
 			<type>zip</type>
 		</dependency>
 		<dependency>
