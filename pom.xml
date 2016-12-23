@@ -63,6 +63,12 @@
 			<type>zip</type>
 		</dependency>
 		<dependency>
+		    <groupId>com.agifac.lib</groupId>
+		    <artifactId>maf-defaultplugins-extension</artifactId>
+		    <version>14.0.6</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
 			<groupId>com.agifac.maf</groupId>
 			<artifactId>maf-dbmdl</artifactId>
 			<version>14.0.3</version>
@@ -74,12 +80,7 @@
 			<version>14.0.0</version>
 			<type>zip</type>
 		</dependency>
-		<dependency>
-		    <groupId>com.agifac.lib</groupId>
-		    <artifactId>maf-defaultplugins-extension</artifactId>
-		    <version>14.0.5</version>
-			<type>jar</type>
-		</dependency>
+		
 	</dependencies>
 
 	<build>
