@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.agifac.maf.packaging</groupId>
 	<artifactId>bizdock-image-builder</artifactId>
-	<version>14.0.7</version>
+	<version>14.0.8</version>
 	<name>Docker image builder</name>
 	<description>This module is an assembly which collects the packages used subsequently to build the BizDock Docker image</description>
 	<packaging>pom</packaging>
@@ -59,13 +59,13 @@
 		<dependency>
 			<groupId>com.agifac.maf.packaging</groupId>
 			<artifactId>maf-desktop</artifactId>
-			<version>14.0.7</version>
+			<version>14.0.8</version>
 			<type>zip</type>
 		</dependency>
 		<dependency>
 		    <groupId>com.agifac.lib</groupId>
 		    <artifactId>maf-defaultplugins-extension</artifactId>
-		    <version>14.0.7</version>
+		    <version>14.0.8</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
