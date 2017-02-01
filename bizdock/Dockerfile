@@ -2,6 +2,12 @@ FROM centos:7
 
 MAINTAINER Marc Schaer
 
+# Set the locale
+RUN localedef --quiet -c -i en_US -f UTF-8 en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
 #Port
 EXPOSE 8080
 
