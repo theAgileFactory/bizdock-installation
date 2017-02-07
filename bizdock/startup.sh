@@ -210,7 +210,7 @@ EOF
   ls /opt/artifacts/maf-file-system/$EXTENSIONS_FOLDER
 
   echo "---- LAUNCHING BIZDOCK APPLICATION ----"
-  /opt/maf/maf-desktop/server/maf-desktop-app-dist/bin/maf-desktop-app -Dcom.agifac.appid=maf-desktop-docker -Dconfig.file=/opt/maf/maf-desktop/conf/application.conf -Dlogger.file=/opt/maf/maf-desktop/conf/application-logger.xml -Dhttp.port=8080 -DapplyEvolutions.default=false
+  /opt/maf/maf-desktop/server/maf-desktop-app-dist/bin/maf-desktop-app -Dcom.agifac.appid=maf-desktop-docker -Dconfig.file=/opt/maf/maf-desktop/conf/application.conf -Dlogger.file=/opt/maf/maf-desktop/conf/application-logger.xml -Dhttp.port=8080 -DapplyEvolutions.default=false $BIZDOCK_BIN_PARAMETERS
 else
   echo "You should use a valid user"
 fi
