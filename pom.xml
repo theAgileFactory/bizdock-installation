@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>com.agifac.maf</groupId>
 			<artifactId>maf-dbmdl</artifactId>
-			<version>14.0.3</version>
+			<version>14.1.0-SNAPSHOT</version>
 			<type>zip</type>
 		</dependency>
 		<dependency>
