@@ -1,0 +1,11 @@
+sudo: required
+language: java
+jdk:
+- oraclejdk8
+env:
+  global:
+
+services:
+- docker
+before_install:
+- ./build_image.sh
