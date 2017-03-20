@@ -4,8 +4,12 @@ jdk:
 - oraclejdk8
 env:
   global:
-
 services:
 - docker
 before_install:
 - ./build_image.sh
+notifications:
+  email: true
+branches:
+  only:
+  - master
