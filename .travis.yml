@@ -9,6 +9,8 @@ env:
 services:
 - docker
 before_install:
+- openssl aes-256-cbc -K $encrypted_4f2b5b524ff1_key -iv $encrypted_4f2b5b524ff1_iv
+  -in deploy_rsa.enc -out deploy_rsa -d
 - ./build_image.sh
 after_success:
 - .travis/deploy.sh
