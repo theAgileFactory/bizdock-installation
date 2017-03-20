@@ -11,8 +11,7 @@ services:
 before_install:
 - ./build_image.sh
 after_success:
-- docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
-- docker push bizdock/bizdock:${BIZDOCK_VERSION}
+- .travis/deploy.sh
 notifications:
   email: true
 branches:
