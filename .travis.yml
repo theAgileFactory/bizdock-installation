@@ -13,3 +13,6 @@ notifications:
 branches:
   only:
   - master
+cache:
+  directories:
+  - ~/.m2
