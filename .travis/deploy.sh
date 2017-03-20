@@ -1,5 +1,5 @@
 #!/bin/bash
-BIZDOCK_VERSION=$(cat ../target/version.properties)
+BIZDOCK_VERSION=$(cat target/version.properties)
 
 # Push version on Docker HUB
 docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
