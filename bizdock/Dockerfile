@@ -2,11 +2,6 @@ FROM centos:7
 
 MAINTAINER Marc Schaer
 
-# Set the locale
-RUN localedef --quiet -c -i en_US -f UTF-8 en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-
 #Port
 EXPOSE 8080
 
@@ -19,6 +14,10 @@ RUN yum update -y && yum install -y --setopt=tsflags=nodocs epel-release && yum 
 
 #Install required and useful packages
 RUN yum install -y --setopt=tsflags=nodocs bc which unzip tar mariadb telnet wget curl bzip2 xz java-1.8.0-openjdk && yum clean all
+
+# Fix the locale
+RUN localedef --quiet -c -i en_US -f UTF-8 en_US.UTF-8
+ENV LANG en_US.UTF-8
 
 #mysql configuration
 RUN echo -e "[client]\ndefault-character-set=utf8\n" >> /etc/my.cnf
