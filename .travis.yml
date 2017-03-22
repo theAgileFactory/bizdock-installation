@@ -22,7 +22,7 @@ notifications:
   email: true
 branches:
   only:
-  - master
+  - R-14.1.1
 cache:
   directories:
   - ~/.m2
