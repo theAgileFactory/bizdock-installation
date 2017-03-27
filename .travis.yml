@@ -20,9 +20,6 @@ after_success:
 - .travis/deploy.sh
 notifications:
   email: true
-branches:
-  only:
-  - master
 cache:
   directories:
   - ~/.m2
