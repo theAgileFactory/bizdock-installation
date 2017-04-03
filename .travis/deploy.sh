@@ -12,7 +12,5 @@ then
     docker push bizdock/bizdock:latest
 fi
 
-curl ipecho.net/plain ; echo
-
 echo "Deploying on CI"
-# chmod 600 deploy_key && ssh -i deploy_key ${CI_USER}@ci.bizdock.io ${BIZDOCK_VERSION}
+chmod 600 deploy_key && ssh -i deploy_key ${CI_USER}@ci.bizdock.io ${BIZDOCK_VERSION}
