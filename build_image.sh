@@ -10,6 +10,7 @@ STATUS=$?
 if [ $STATUS -ne 0 ]; then
   exit 1
 fi
+grep "maf-dbmdl" build.out
 
 echo "----------------------------------------"
 echo " Building the BizDock DB image          "
