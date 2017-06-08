@@ -27,6 +27,7 @@ RUN mkdir -p /tmp/deadletters/ && mkdir -p /tmp/deadletters-reprocessing
 #Add compiled files
 ADD bizdock/*.zip /opt/maf/
 ADD bizdock/*.jar /opt/maf/
+ADD build.out /opt/maf/
 RUN unzip /opt/maf/merged-dbmdl-framework-$(ls /opt/maf/merged-dbmdl-framework-*.zip | cut -d '-' -f 4-5 | cut -d '.' -f 1-3).zip -d /opt/maf/dbmdl-framework && chmod u+x /opt/maf/dbmdl-framework/scripts/*
 RUN unzip /opt/maf/merged-maf-dbmdl-$(ls /opt/maf/merged-maf-dbmdl-*.zip | cut -d '-' -f 4-5 | cut -d '.' -f 1-3).zip -d /opt/maf/maf-dbmdl && chmod u+x /opt/maf/maf-dbmdl/scripts/*
 RUN unzip /opt/maf/merged-maf-desktop-$(ls /opt/maf/merged-maf-desktop-*.zip | cut -d '-' -f 4-5 | cut -d '.' -f 1-3).zip -d /opt/maf/maf-desktop
