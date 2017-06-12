@@ -5,12 +5,11 @@
 echo "----------------------------------------"
 echo " Collecting the software components     "
 echo "----------------------------------------"
-mvn -U clean install > build.out
+mvn -U clean install
 STATUS=$?
 if [ $STATUS -ne 0 ]; then
   exit 1
 fi
-grep "maf-dbmdl" build.out
 
 echo "----------------------------------------"
 echo " Building the BizDock DB image          "
