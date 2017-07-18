@@ -5,7 +5,7 @@
 echo "----------------------------------------"
 echo " Collecting the software components     "
 echo "----------------------------------------"
-mvn -U clean install
+mvn -U -q clean install
 STATUS=$?
 if [ $STATUS -ne 0 ]; then
   exit 1
