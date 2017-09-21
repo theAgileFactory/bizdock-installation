@@ -141,14 +141,19 @@ EOF
     mysql --verbose -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /opt/maf/maf-desktop/server/maf-desktop-app-dist/conf/sql/init_base.sql
   fi
 
-  if [[ "$TEST_DATA" = "true" ]]; then
-    echo ">> Inserting the test data"
-    wget https://raw.githubusercontent.com/theAgileFactory/maf-desktop-app/master/development/tools/sample-data/init_data.sql
-    if [ $STATUS -eq 0 ]; then
-	echo ">> Test data found, loading now"
-    	mysql --verbose -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < init_data.sql
-    else
+  if [[ ! "$TEST_DATA" = "false" ]]; then
+    if [[ "$TEST_DATA" = "true" ]]; then
+      echo ">> Getting test data from github master branch"
+      wget https://raw.githubusercontent.com/theAgileFactory/maf-desktop-app/master/development/tools/sample-data/init_data.sql
+      if [ $STATUS -eq 0 ]; then
+        echo ">> Test data found"
+        mysql --verbose -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < init_data.sql
+      else
         echo "WARNING : no test data found, please contact the GitHub project owner"
+      fi
+    else
+      echo ">> Loading custom data"
+      mysql --verbose -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < cutom_data.sql
     fi
   fi
 

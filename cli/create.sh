@@ -313,6 +313,11 @@ docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INS
   bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $BIZDOCK_USERNAME
 echo "... start command completed"
 
+if [ ! "$TEST_DATA" = "false" -a ! "$TEST_DATA" = "true" ]; then
+  echo ">>> Pushing custom test data in container..."
+  docker cp ${TEST_DATA} ${INSTANCE_NAME}_bizdock:/opt/scripts/custom_data.sql
+fi
+
 echo ">>> Creating the administration scripts..."
 
 cat > $SCRIPT_DIR/remove.tmp <<- EOM
