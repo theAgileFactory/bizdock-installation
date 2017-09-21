@@ -27,6 +27,7 @@ DISTANT_DB=false
 CONFIGURE_DB=false
 INTERACTIVE_MODE=true
 TEST_DATA=false
+TEST_DATA_FILE=""
 DOCKER_RUN_PARAMETERS=""
 BIZDOCK_BIN_PARAMETERS=""
 
@@ -38,7 +39,7 @@ then
 fi
 
 # Process the arguments
-while getopts ":P:u:k:a:v:s:j:p:r:H:c:m:b:x:w:z:t:dhi" option
+while getopts ":P:u:k:a:v:s:j:p:r:H:c:m:b:x:w:z:t:f:dhi" option
 do
   case $option in
     a)
@@ -135,6 +136,9 @@ do
     t)
       TEST_DATA="$OPTARG"
       ;;
+    f)
+      TEST_DATA_FILE="$OPTARG"
+      ;;
     i)
       CONFIGURE_DB=true
       ;;
@@ -213,6 +217,7 @@ echo "BizDock public URL                    = $BIZDOCK_PUBLIC_URL"
 echo "BizDock binary special parameters     = $BIZDOCK_BIN_PARAMETERS"
 echo "Docker run commands parameters        = $DOCKER_RUN_PARAMETERS"
 echo "Reset the database and load test data = $TEST_DATA"
+echo "Load test data from external file     = $TEST_DATA_FILE"
 
 if [ "$INTERACTIVE_MODE" = "true" ]; then
   read -p "Continue (y/n)?" choice
@@ -313,9 +318,9 @@ docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INS
   bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $BIZDOCK_USERNAME
 echo "... start command completed"
 
-if [ ! "$TEST_DATA" = "false" -a ! "$TEST_DATA" = "true" ]; then
+if [ "$TEST_DATA" = "true" -a ! -z "$TEST_DATA_FILE" ]; then
   echo ">>> Pushing custom test data in container..."
-  docker cp ${TEST_DATA} ${INSTANCE_NAME}_bizdock:/opt/scripts/custom_data.sql
+  docker cp ${TEST_DATA_FILE} ${INSTANCE_NAME}_bizdock:/opt/scripts/custom_data.sql
 fi
 
 echo ">>> Creating the administration scripts..."
