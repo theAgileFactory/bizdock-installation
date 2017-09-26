@@ -311,6 +311,7 @@ docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INS
   -e MYSQL_USER=$DB_USER \
   -e MYSQL_PASSWORD=$DB_USER_PASSWD \
   -e TEST_DATA="$TEST_DATA" \
+  -e TEST_DATA_FILE="$TEST_DATA_FILE" \
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
   -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
@@ -320,7 +321,7 @@ echo "... start command completed"
 
 if [ "$TEST_DATA" = "true" -a ! -z "$TEST_DATA_FILE" ]; then
   echo ">>> Pushing custom test data in container..."
-  docker cp ${TEST_DATA_FILE} ${INSTANCE_NAME}_bizdock:/opt/scripts/custom_data.sql
+  docker cp ${TEST_DATA_FILE} ${INSTANCE_NAME}_bizdock:/opt/maf/custom_data.sql
 fi
 
 echo ">>> Creating the administration scripts..."

@@ -22,6 +22,7 @@ echo "MYSQL_USER=$MYSQL_USER"
 echo "MYSQL_PASSWORD=$MYSQL_PASSWORD"
 echo "CONFIGURE_DB_INIT=$CONFIGURE_DB_INIT"
 echo "TEST_DATA=$TEST_DATA"
+echo "TEST_DATA_FILE=$TEST_DATA_FILE"
 
 while [[ $# > 0 ]]
 do
@@ -153,7 +154,7 @@ EOF
       fi
     else
       echo ">> Loading custom data"
-      mysql --verbose -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < custom_data.sql
+      mysql --verbose -h ${MYSQL_HOSTNAME} --port=${MYSQL_PORT} -u ${MYSQL_USER} --password=${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /opt/maf/custom_data.sql
     fi
   fi
 
