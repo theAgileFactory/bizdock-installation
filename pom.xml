@@ -66,25 +66,25 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.agifac.maf.packaging</groupId>
+			<groupId>com.sword-group.bizdock.packaging</groupId>
 			<artifactId>maf-desktop</artifactId>
 			<version>${play.app.version}</version>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-		    <groupId>com.agifac.lib</groupId>
+		    <groupId>com.sword-group.bizdock.lib</groupId>
 		    <artifactId>maf-defaultplugins-extension</artifactId>
 		    <version>${maf-defaultplugins-extension.version}</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>com.agifac.maf</groupId>
+			<groupId>com.sword-group.bizdock.dbmdl</groupId>
 			<artifactId>maf-dbmdl</artifactId>
 			<version>${maf.dbmdl.version}</version>
 			<type>zip</type>
 		</dependency>
 		<dependency>
-			<groupId>com.agifac.lib</groupId>
+			<groupId>com.sword-group.bizdock.dbmdl</groupId>
 			<artifactId>dbmdl-framework</artifactId>
 			<version>${dbmdl.framework.version}</version>
 			<type>zip</type>
