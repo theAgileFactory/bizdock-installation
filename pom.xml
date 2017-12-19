@@ -48,11 +48,10 @@
 			<url>http://repo.typesafe.com/typesafe/releases/</url>
 		</repository>
 		<repository>
-            		<id>sonatype-snapshots</id>
-            		<name>sonatype-snapshots</name>
-            		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-       		 </repository>
-		
+			<id>sonatype-snapshots</id>
+			<name>sonatype-snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		 </repository>
 	</repositories>
 
 	<properties>
