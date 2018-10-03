@@ -314,7 +314,7 @@ docker run $DOCKER_RUN_PARAMETERS --name=${INSTANCE_NAME}_bizdock -d --net=${INS
   -e TEST_DATA_FILE="$TEST_DATA_FILE" \
   -e BIZDOCK_PORT=$BIZDOCK_PORT \
   -e BIZDOCK_PUBLIC_URL=$BIZDOCK_PUBLIC_URL \
-  -e BIZDOCK_BIN_PARAMETERS=$BIZDOCK_BIN_PARAMETERS \
+  -e BIZDOCK_BIN_PARAMETERS="$BIZDOCK_BIN_PARAMETERS" \
   -e CLI_VERSION=$CLI_VERSION \
   bizdock/bizdock:${DOCKER_VERSION} --useruid $(id -u $(whoami)) --username $BIZDOCK_USERNAME
 echo "... start command completed"
