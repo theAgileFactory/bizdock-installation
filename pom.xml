@@ -57,7 +57,7 @@
 	<properties>
 		<project.build.sourceEncoding>latin1</project.build.sourceEncoding>
 		<maven-dependency-plugin.version>2.8</maven-dependency-plugin.version>
-		<play.app.version>17.0.2</play.app.version>
+		<play.app.version>17.0.3-SNAPSHOT</play.app.version>
 		<maf-defaultplugins-extension.version>17.0.3-SNAPSHOT</maf-defaultplugins-extension.version>
 		<maf.dbmdl.version>17.0.3-SNAPSHOT</maf.dbmdl.version>
 		<dbmdl.framework.version>17.0.3-SNAPSHOT</dbmdl.framework.version>
