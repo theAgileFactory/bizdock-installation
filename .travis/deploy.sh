@@ -5,7 +5,7 @@ echo "Pushing BizDock ${BIZDOCK_VERSION} on Docker HUB"
 docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
 docker push bizdock/bizdock:${BIZDOCK_VERSION}
 
-if [ ! -z "$TRAVIS_TAG" ]
+if [[ $BIZDOCK_VERSION != *-SNAPSHOT ]]
 then
     echo "Tagging and pushing new release with 'latest'"
     docker tag bizdock/bizdock:${BIZDOCK_VERSION} bizdock/bizdock:latest
